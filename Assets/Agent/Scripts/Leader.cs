@@ -10,22 +10,15 @@ public class Leader : Agent {
     // Define the random point position around the circle
     private float anglePoint = 0.0f;
 
-    // Define the agent properties
-    override protected void defineAgent()
-    {
-        _mass = 10;
-        _maxSpeed = 50;
-        _maxSteer = 1000;
-        _orientation = 0.0f;
-        _position = new Vector2(250,250);
-        _velocity = Vector2.zero;
-    }
-
 
     // Reimplemented function for different behavior
-    override protected Vector2 steering()
-    {
+    override protected Vector2 steeringForces() {
         anglePoint = (anglePoint + (Random.Range(-1.0f, 1.0f)) * variation) % (2 * Mathf.PI);
+
+        // If the agent is close to drop out terrain
+        bool borderCondition = _position.x < 50 || _position.x > 450 || _position.y < 50 || _position.y > 450;
+        anglePoint = (borderCondition) ? (anglePoint + Mathf.PI) % (2 * Mathf.PI) : anglePoint;
+        _velocity= (borderCondition) ? -_velocity : _velocity;
 
         Vector2 force = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
 
@@ -34,8 +27,7 @@ public class Leader : Agent {
 
 
     // Force Visualization
-    void OnDrawGizmosSelected()
-    {
+    void OnDrawGizmosSelected () {
         Vector2 circlePosition = _position + _velocity.normalized * 1.5f * radiusCircle;
         Vector2 pointPosition = circlePosition + new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
 
