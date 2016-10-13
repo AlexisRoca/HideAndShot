@@ -12,16 +12,41 @@ public class Leader : Agent {
 
 
     // Reimplemented function for different behavior
-    override protected Vector2 steeringForces() {
-        anglePoint = (anglePoint + (Random.Range(-1.0f, 1.0f)) * variation) % (2 * Mathf.PI);
+    override protected Vector2 steeringForces () {
+        Vector2 force = avoidObstacles();
 
-        // If the agent is close to drop out terrain
-        bool borderCondition = _position.x < 50 || _position.x > 450 || _position.y < 50 || _position.y > 450;
-        anglePoint = (borderCondition) ? (anglePoint + Mathf.PI) % (2 * Mathf.PI) : anglePoint;
-        _velocity= (borderCondition) ? -_velocity : _velocity;
+        force += (force.Equals(Vector2.zero)) ? wanderWalk() : Vector2.zero;
+
+        return force;
+    }
+
+
+    // Implement the wander walk for Leaders
+    protected Vector2 wanderWalk () {
+        anglePoint = (anglePoint + (Random.Range(-1.0f, 1.0f)) * variation) % (2 * Mathf.PI);
 
         Vector2 force = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
 
+        return force;
+    }
+
+
+    // Implement the obstacle avoid
+    protected Vector2 avoidObstacles () {
+        Vector2 force = Vector2.zero;
+
+        Vector3 origine = new Vector3(_position.x, 10.0f, _position.y);
+        Vector3 direction = new Vector3(_velocity.x, 10.0f, _velocity.y);
+
+        RaycastHit hit;
+                
+        if (Physics.Raycast(origine, direction, out hit, 50.0f)) {
+            if (! hit.collider.GetComponent<Agent>()) {
+                force = Vector2.Reflect(_velocity, new Vector2(hit.normal.x, hit.normal.z));
+                anglePoint += Mathf.PI / 2.0f;
+            }
+        }
+        
         return force;
     }
 
@@ -30,8 +55,6 @@ public class Leader : Agent {
     void OnDrawGizmosSelected () {
         Vector2 circlePosition = _position + _velocity.normalized * 1.5f * radiusCircle;
         Vector2 pointPosition = circlePosition + new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
-
-        Vector2 force = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
 
         Vector3 circlePosition3D = new Vector3(circlePosition.x, 0, circlePosition.y);
         Vector3 pointPosition3D = new Vector3(pointPosition.x, 0, pointPosition.y);
@@ -49,6 +72,5 @@ public class Leader : Agent {
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(agentPosition3D, circlePosition3D);
         Gizmos.DrawLine(agentPosition3D, pointPosition3D);
-
     }
 }
