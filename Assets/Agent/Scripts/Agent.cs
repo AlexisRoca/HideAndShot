@@ -24,6 +24,8 @@ public class Agent : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        // Get the world position in case of collision
+        _position = new Vector2(transform.position.x, transform.position.z);
 
         // Apply changes with steering force
         updateAgent();
