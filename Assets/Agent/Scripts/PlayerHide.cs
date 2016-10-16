@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerHide : Agent {
+public class PlayerHide : Agent
+{
 
     public float sensibility = 0.0f;
+
 
     // Reimplemented function for different behavior
     override protected Vector2 steeringForces()
@@ -15,6 +17,8 @@ public class PlayerHide : Agent {
         force += (Input.GetKey(KeyCode.Q)) ? new Vector2(-1, 0) : Vector2.zero;
         force += (Input.GetKey(KeyCode.D)) ? new Vector2(1, 0) : Vector2.zero;
 
-        return force * sensibility;
+        _velocity = force * sensibility;
+
+        return Vector2.zero;
     }
 }

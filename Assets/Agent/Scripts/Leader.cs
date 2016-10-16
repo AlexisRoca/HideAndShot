@@ -10,6 +10,9 @@ public class Leader : Agent {
     // Define the random point position around the circle
     private float anglePoint = 0.0f;
 
+    // Coefficient of avoiding
+    public float coefAvoiding = 0.0f;
+
 
     // Reimplemented function for different behavior
     override protected Vector2 steeringForces () {
@@ -40,14 +43,16 @@ public class Leader : Agent {
 
         RaycastHit hit;
                 
-        if (Physics.Raycast(origine, direction, out hit, 50.0f)) {
+        if (Physics.Raycast(origine, direction, out hit, 100.0f)) {
             if (! hit.collider.GetComponent<Agent>()) {
-                force = Vector2.Reflect(_velocity, new Vector2(hit.normal.x, hit.normal.z));
-                anglePoint += Mathf.PI / 2.0f;
+                force = _velocity.normalized + new Vector2(hit.normal.x, hit.normal.z);
+
+                float side = Mathf.Acos(Vector2.Dot(_velocity.normalized, -new Vector2(hit.normal.x, hit.normal.z)));
+                anglePoint += side;
             }
         }
         
-        return force;
+        return force * coefAvoiding;
     }
 
 

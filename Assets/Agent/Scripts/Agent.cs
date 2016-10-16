@@ -11,9 +11,9 @@ public class Agent : MonoBehaviour {
     public int _maxSpeed { get; protected set; }
     public int _maxSteer { get; protected set; }
 
-    public float _orientation { get; protected set; }
-    public Vector2 _position { get; protected set; }
-    public Vector2 _velocity { get; protected set; }
+    public float _orientation { get; set; }
+    public Vector2 _position { get; set; }
+    public Vector2 _velocity { get; set; }
 
 
     // Use this for initialization
@@ -86,15 +86,13 @@ public class Agent : MonoBehaviour {
     protected Vector2 steeringSeparation() {
         Vector2 force = Vector2.zero;
 
-        // Get all Followers in the scene
+        // Get all Agent in the scene
         Agent[] agentList = GameObject.FindObjectsOfType<Agent>();
 
-        // For each follower
-        for (int i = 0; i < agentList.Length; i++)
-        {
+        // For each agent
+        for (int i = 0; i < agentList.Length; i++) {
             // Don't apply force with himself
-            if (!agentList[i].Equals(this))
-            {
+            if (!agentList[i].Equals(this)) {
                 // Compute the distance to the other follower
                 Vector2 positionDifference = _position - agentList[i]._position;
                 float distance = positionDifference.magnitude;

@@ -15,7 +15,7 @@ public class Cursor : MonoBehaviour
         SpriteRenderer renderer = m_cursor.AddComponent<SpriteRenderer>();
         renderer.sprite = m_target;
 
-        m_cursor.transform.position = new Vector3(0, 150, 0);
+        m_cursor.transform.position = new Vector3(250, 150, 250);
         m_cursor.transform.localScale = new Vector3(3, 3, 3);
         m_cursor.transform.rotation = Camera.main.transform.rotation;
     }
@@ -30,7 +30,7 @@ public class Cursor : MonoBehaviour
         speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
         speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
 
-        m_cursor.transform.position = m_cursor.transform.position + new Vector3(speed.x,0,speed.y) * 30 * Time.deltaTime;
+        m_cursor.transform.position = m_cursor.transform.position + new Vector3(speed.x,0,speed.y) * 50 * Time.deltaTime;
 
 
         if(Input.GetKey(KeyCode.Keypad0))
