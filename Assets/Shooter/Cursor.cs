@@ -5,6 +5,7 @@ public class Cursor : MonoBehaviour
 {
     public Sprite m_target;
     public GameObject m_cursor;
+    public float m_sensibility = 50.0f;
 
 	// Use this for initialization
 	void Start ()
@@ -30,7 +31,7 @@ public class Cursor : MonoBehaviour
         speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
         speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
 
-        m_cursor.transform.position = m_cursor.transform.position + new Vector3(speed.x,0,speed.y) * 50 * Time.deltaTime;
+        m_cursor.transform.position = m_cursor.transform.position + new Vector3(speed.x,0,speed.y) * m_sensibility * Time.deltaTime;
 
 
         if(Input.GetKey(KeyCode.Keypad0))
@@ -45,7 +46,7 @@ public class Cursor : MonoBehaviour
             {
                 if(hit.collider.GetComponent<Agent>())
                 {
-                    if (hit.collider.GetComponent<PlayerHide>())
+                    if (hit.collider.tag == "PlayerHide")
                         print("Hit Player!");
                     else
                         print("Hit Agent, Try Again");

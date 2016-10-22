@@ -3,46 +3,57 @@ using System.Collections;
 
 public class Agent : MonoBehaviour {
 
-    public float livingSpaceRadius = 0.0f;
-    public float coefSeparation = 1.0f;
-
     // Attributes deffinition (get/set)
-    public int _mass { get; protected set; }
-    public int _maxSpeed { get; protected set; }
-    public int _maxSteer { get; protected set; }
+    // Personal attributes
+    public int _mass { get; set; }
+    public int _maxSpeed { get; set; }
+    public int _maxSteer { get; set; }
+    public float _wanderPoint = 0.0f;
 
+    // Displacement attributes
     public float _orientation { get; set; }
     public Vector2 _position { get; set; }
     public Vector2 _velocity { get; set; }
 
+    // Steering force memory (RAZ at each update)
+    public Vector2 _steeringForce { get; set; }
+
 
     // Use this for initialization
     void Start () {
-        defineAgent();
-	}
-	
+        _mass = 50;
+        _maxSpeed = 30;
+        _maxSteer = 1000;
 
-	// Update is called once per frame
-	void Update () {
-        // Get the world position in case of collision
+        _orientation = 0.0f;
         _position = new Vector2(transform.position.x, transform.position.z);
+        _velocity = Vector2.zero;
 
-        // Apply changes with steering force
-        updateAgent();
-        
-        // Apply changes to the GameObject
-        updateGameObject();
-	}
+        _steeringForce = Vector2.zero;
+    }
+
+
+    // Define personal agent
+    public void defineAgent(int mass, int maxSpeed, int maxSteer, float orientation, float wander = 0.0f) {
+        _mass = mass;
+        _maxSpeed = maxSpeed;
+        _maxSteer = maxSteer;
+        _orientation = orientation;
+
+        _wanderPoint = wander;
+    }
 
 
     // Update the agent values
-    void updateAgent () {
-        // Compute steering force under  max steer
-        Vector2 steerForce = steeringForces() + steeringSeparation()*coefSeparation;
-        steerForce = Vector2.ClampMagnitude(steerForce, _maxSteer);
+    public void updateAgent (float dTime) {
+        // Collect the world position in case of collision
+        _position = new Vector2(transform.position.x, transform.position.z);
+
+        // Truncate steering forces by the max limit
+        Vector2 steer = Vector2.ClampMagnitude(_steeringForce, _maxSteer);
 
         // Compute acceleration
-        Vector2 acceleration = steerForce / _mass;
+        Vector2 acceleration = steer / _mass;
 
         // Compute new velocity
         Vector2 newVelocity = _velocity + acceleration;
@@ -54,54 +65,69 @@ public class Agent : MonoBehaviour {
         _velocity = Vector2.ClampMagnitude(newVelocity, _maxSpeed);
 
         // Compute new position
-        _position += _velocity * Time.deltaTime;
+        _position += _velocity * dTime;
+
+        // RAZ Steering force for this delta time
+        _steeringForce = Vector2.zero;
     }
 
 
-    // Update the agent in the game world
-    void updateGameObject () {
-        transform.rotation = Quaternion.AngleAxis(_orientation, new Vector3(0,1,0));
-        transform.position = new Vector3(_position.x, transform.position.y, _position.y);
-    }
+    // Find the nearest agent taged T
+    public Agent findNearest (string Tag) {
+        // Get all Agent taged T in the scene
+        GameObject[] agentList = GameObject.FindGameObjectsWithTag(Tag);
 
+        // Define distance and GameObject for the nearest agent
+        Agent nearestAgent = null;
+        float nearestDistance = float.MaxValue;
 
-    // Define the agent properties
-    virtual protected void defineAgent () {
-        _mass = 5;
-        _maxSpeed = 30;
-        _maxSteer = 1000;
-        _orientation = Random.Range(0.0f,360.0f);
-        _position = new Vector2(Random.Range(50,450), Random.Range(50, 450));
-        _velocity = Vector2.zero;
-    }
+        // Find the nearest to follow
+        foreach (GameObject currentAgent in agentList) {
+            float currentDistance = (_position - currentAgent.GetComponent<Agent>()._position).magnitude;
 
-
-    // Reimplemented function for different comportment
-    virtual protected Vector2 steeringForces () {
-        return Vector2.zero;
-    }
-
-
-    // Keep a living space
-    protected Vector2 steeringSeparation() {
-        Vector2 force = Vector2.zero;
-
-        // Get all Agent in the scene
-        Agent[] agentList = GameObject.FindObjectsOfType<Agent>();
-
-        // For each agent
-        for (int i = 0; i < agentList.Length; i++) {
-            // Don't apply force with himself
-            if (!agentList[i].Equals(this)) {
-                // Compute the distance to the other follower
-                Vector2 positionDifference = _position - agentList[i]._position;
-                float distance = positionDifference.magnitude;
-
-                // If he is in the living space
-                force = (distance < livingSpaceRadius) ? (force + positionDifference.normalized / distance) : force;
+            if (currentDistance < nearestDistance) {
+                nearestAgent = currentAgent.GetComponent<Agent>();
+                nearestDistance = currentDistance;
             }
         }
 
-        return force;
+        return nearestAgent;
+    }
+
+
+    // Find neighbours agent
+    public Agent[] findNeighbours(float distance) {
+        // Get all Agent taged T in the scene
+        Agent[] agentList = GameObject.FindObjectsOfType<Agent>();
+        bool[] inNeighbourhood = new bool[agentList.Length];
+
+        int nbNeighbours = 0;
+
+        // Find the number of contributors
+        for (int i=0; i<agentList.Length; i++) {
+            if (agentList[i].Equals(this)) continue;
+
+            float currentDistance = (_position - agentList[i]._position).magnitude;
+
+            if (currentDistance < distance) {
+                nbNeighbours++;
+                inNeighbourhood[i] = true;
+            } else {
+                inNeighbourhood[i] = false;
+            }
+        }
+
+        Agent[] neighbours = new Agent[nbNeighbours];
+        int it = 0;
+
+        // Create the neighbour list
+        for (int i=0; i<agentList.Length; i++) {
+            if (inNeighbourhood[i]) {
+                neighbours.SetValue(agentList[i], it);
+                it++;
+            }
+        }
+
+        return neighbours;
     }
 }
