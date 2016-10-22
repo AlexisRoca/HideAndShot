@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Cursor : MonoBehaviour
 {
-    public Sprite m_target;
-    public GameObject m_cursor;
+    Sprite m_target;
+    GameObject m_cursor;
     public float m_sensibility = 50.0f;
 
 	// Use this for initialization

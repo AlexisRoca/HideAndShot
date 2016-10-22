@@ -31,13 +31,14 @@ public class SteeringBehavior {
         float distance = (agentPosition - leaderAreaCenter).magnitude;
 
         // If the agent is in the circle, apply a steering force
-        Vector2 force = (distance < targetVelocity.magnitude) ? (agentPosition - leaderAreaCenter).normalized / distance : Vector2.zero;
+        // Vector2 force = (distance < targetVelocity.magnitude) ? (agentPosition - leaderAreaCenter).normalized / distance : Vector2.zero;
+        Vector2 force = (distance < targetVelocity.magnitude) ? (agentPosition - leaderAreaCenter).normalized : Vector2.zero;
         return force;
     }
 
 
     // Avoid behavior
-    public static Vector2 avoid (Vector2 agentPosition, Vector2 agentVelocity) {
+    public static Vector2 avoid (Vector2 agentPosition, Vector2 agentVelocity, ref float wander) {
         Vector2 force = Vector2.zero;
 
         Vector3 origine = new Vector3(agentPosition.x, 10.0f, agentPosition.y);
@@ -45,9 +46,10 @@ public class SteeringBehavior {
 
         RaycastHit hit;
 
-        if (Physics.Raycast(origine, direction, out hit, 100.0f)) {
+        if (Physics.Raycast(origine, direction, out hit, 50.0f)) {
             if (hit.collider.GetType() != typeof(Agent)) {
-                force = agentVelocity.normalized + new Vector2(hit.normal.x, hit.normal.z);
+                force = - agentVelocity * 2.0f;
+                wander += Mathf.PI;
             }
         }
 

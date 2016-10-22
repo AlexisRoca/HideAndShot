@@ -5,6 +5,11 @@ public class AgentEngine : MonoBehaviour {
 
     // Define Generic attributes
     float _timeVariation = 1.0f;
+    float _coefAvoidObs = 50.0f;
+    float _coefStayOut = 500.0f;
+    float _coefPlayer = 50.0f;
+    float _coefSeparation = 100.0f;
+    float _coefCrossing = 100.0f;
 
     // Define Agent lists
     Agent[] _agentList;
@@ -14,13 +19,14 @@ public class AgentEngine : MonoBehaviour {
     Agent[] _playerList;
 
     // Define Zone lists
-    Zone[] _crossingList;
+    Crossing[] _crossingList;
 
 
     // Use this for initialization
     void Start () {
         collectGameObjects();
         defineAgents();
+        defineZones();
     }
 
 
@@ -37,10 +43,10 @@ public class AgentEngine : MonoBehaviour {
     void updateAgentInteraction(float dTime) {
         // Leaders
         foreach (Agent leader in _leaderList) {
-            Vector2 leadSteer = SteeringBehavior.leader(20, 0.5f, ref leader._wanderPoint);
-            Vector2 avoidSteer = SteeringBehavior.avoid(leader._position, leader._velocity);
+            Vector2 leadSteer = SteeringBehavior.leader(20, 0.2f, ref leader._wanderPoint);
+            Vector2 avoidSteer = SteeringBehavior.avoid(leader._position, leader._velocity, ref leader._wanderPoint) * _coefAvoidObs;
 
-            Vector2 force = leadSteer + avoidSteer * 50.0f;
+            Vector2 force = leadSteer + avoidSteer;
 
             leader._steeringForce += force;
         }
@@ -50,9 +56,9 @@ public class AgentEngine : MonoBehaviour {
             Agent nearestLeader = follower.findNearest("Leader");
 
             Vector2 followSteer = SteeringBehavior.follow(follower._position, nearestLeader._position, nearestLeader._velocity, dTime);
-            Vector2 stayOutSteer = SteeringBehavior.stayOut(follower._position, nearestLeader._position, nearestLeader._velocity);
+            Vector2 stayOutSteer = SteeringBehavior.stayOut(follower._position, nearestLeader._position, nearestLeader._velocity) * _coefStayOut;
 
-            Vector2 force = followSteer + stayOutSteer * 50.0f;
+            Vector2 force = followSteer + stayOutSteer;
 
             follower._steeringForce += force;
         }
@@ -60,13 +66,16 @@ public class AgentEngine : MonoBehaviour {
         // Drunk
         foreach (Agent drunk in _drunkList) {
             Vector2 drunkSteer = SteeringBehavior.leader(20, 0.5f, ref drunk._wanderPoint);
+            Vector2 avoidSteer = SteeringBehavior.avoid(drunk._position, drunk._velocity, ref drunk._wanderPoint) * _coefAvoidObs;
 
-            drunk._steeringForce += drunkSteer;
+            Vector2 force = drunkSteer + avoidSteer;
+
+            drunk._steeringForce += force;
         }
 
         // Player
         foreach (Agent player in _playerList) {
-            Vector2 steer = SteeringBehavior.player(player._velocity) * 50.0f;
+            Vector2 steer = SteeringBehavior.player(player._velocity) * _coefPlayer;
 
             player._steeringForce += steer;
         }
@@ -81,8 +90,8 @@ public class AgentEngine : MonoBehaviour {
                 positionNeighbours.SetValue(neighbours[i]._position, i);
             }
 
-            Vector2 steer = SteeringBehavior.separation(agent._position, positionNeighbours);
-            agent._steeringForce += steer*100.0f;
+            Vector2 steer = SteeringBehavior.separation(agent._position, positionNeighbours) * _coefSeparation;
+            agent._steeringForce += steer;
         }
     }
 
@@ -91,9 +100,9 @@ public class AgentEngine : MonoBehaviour {
     void updateZoneInteraction(float dTime) {
         // Croosing
         foreach (Crossing crossing in _crossingList) {
-            foreach (Agent agent in _agentList) {
+            foreach (Agent agent in _leaderList) {
                 if (crossing.isInZone(agent._position)) {
-                    agent._steeringForce += (crossing._allowAgent) ? crossing.pushThrough(agent._velocity) : crossing.pushOut(agent._position);
+                    agent._steeringForce += (crossing._allowAgent) ? crossing.pushThrough(agent._velocity)*_coefCrossing : crossing.pushOut(agent._position)*_coefCrossing;
                 }
             }
         }
@@ -110,6 +119,7 @@ public class AgentEngine : MonoBehaviour {
             agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
         }
 
+        // All crossing
         foreach (Crossing crossing in _crossingList) {
             crossing.updateCrossing(dTime);
         }
@@ -120,22 +130,31 @@ public class AgentEngine : MonoBehaviour {
     void defineAgents() {
         // Leaders
         foreach (Agent leader in _leaderList) {
-            leader.defineAgent(10, 30, 1000, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
+            leader.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
         }
 
         // Follower
         foreach (Agent follower in _followerList) {
-            follower.defineAgent(10, 30, 1000, Random.Range(0.0f, 360.0f));
+            follower.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f));
         }
 
         // Drunk
         foreach (Agent drunk in _drunkList) {
-            drunk.defineAgent(10, 15, 1000, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
+            drunk.defineAgent(10, 10, 30, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
         }
 
         // Player
         foreach (Agent player in _playerList) {
-            player.defineAgent(10, 30, 1000, Random.Range(0.0f, 360.0f));
+            player.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f));
+        }
+    }
+
+
+    // Define the zone properties
+    void defineZones() {
+        // Crossing
+        foreach (Crossing crossing in _crossingList) {
+            crossing.defineCrossing(10);
         }
     }
 
@@ -182,7 +201,7 @@ public class AgentEngine : MonoBehaviour {
         // Crossing
         _crossingList= new Crossing[crossingListGO.Length];
         for (int i = 0; i < crossingListGO.Length; i++) {
-            _crossingList.SetValue(crossingListGO[i].GetComponent<Zone>(), i);
+            _crossingList.SetValue(crossingListGO[i].GetComponent<Crossing>(), i);
         }
     }
 }
