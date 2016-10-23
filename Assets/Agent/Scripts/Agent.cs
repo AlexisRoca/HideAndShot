@@ -48,7 +48,8 @@ public class Agent : MonoBehaviour {
     public void updateAgent (float dTime) {
         // Collect the world position in case of collision
         _position = new Vector2(transform.position.x, transform.position.z);
-
+        // _orientation = transform.rotation.eulerAngles.y;
+        
         // Truncate steering forces by the max limit
         Vector2 steer = Vector2.ClampMagnitude(_steeringForce, _maxSteer);
 
@@ -56,13 +57,13 @@ public class Agent : MonoBehaviour {
         Vector2 acceleration = steer / _mass;
 
         // Compute new velocity
-        Vector2 newVelocity = _velocity + acceleration;
-
-        // Compute new orientation
-        _orientation += Mathf.Acos(Vector2.Dot(_velocity, newVelocity)) % 360.0f;
+        _velocity += acceleration;
 
         // Apply new velocity under a max speed
-        _velocity = Vector2.ClampMagnitude(newVelocity, _maxSpeed);
+        _velocity = Vector2.ClampMagnitude(_velocity, _maxSpeed);
+        
+        // Compute new orientation
+        _orientation = Vector2.Angle(new Vector2(0.0f, 1.0f), _velocity);
 
         // Compute new position
         _position += _velocity * dTime;
