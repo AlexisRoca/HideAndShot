@@ -57,4 +57,28 @@ public class Zone : MonoBehaviour {
 
         GetComponent<Renderer>().material.color = (_allowAgent) ? Color.green : Color.red;
     }
+
+
+    // If fire is green
+    public bool isGreen () {
+        if (!_allowAgent)
+            if (_crossTime - _timer > _crossTime / 10.0f)
+                return true;
+        return false;
+    }
+
+    // If fire is orange
+    public bool isOrange() {
+        if (!_allowAgent)
+            if (_crossTime - _timer < _crossTime / 10.0f)
+                return true;
+        return false;
+    }
+
+    // If fire is red
+    public bool isRed() {
+        if (_allowAgent)
+            return true;
+        return false;
+    }
 }

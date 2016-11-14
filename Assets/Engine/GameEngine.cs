@@ -21,7 +21,7 @@ public class GameEngine : MonoBehaviour {
 
     // Define Zone lists
     Zone[] _crossingList;
-
+    GameObject[] _fireList;
 
     // Use this for initialization
     void Start () {
@@ -61,8 +61,9 @@ public class GameEngine : MonoBehaviour {
 
     // Update all behavior in the scene
     void updateZoneInteraction(float dTime) {
-        // Croosing
+        // Crossing
         ZoneEngine.crossing(_crossingList, _leaderList, _coefCrossing);
+        ZoneEngine.crossing(_crossingList, _followerList, _coefCrossing);
     }
 
 
@@ -79,8 +80,9 @@ public class GameEngine : MonoBehaviour {
         }
 
         // All crossing
-        foreach (Zone crossing in _crossingList) {
-            crossing.updateTime(dTime);
+        for (int i = 0; i < _crossingList.Length; i++) {
+            _crossingList[i].updateTime(dTime);
+            ZoneEngine.fireLight(_crossingList[i], _fireList[i]);
         }
     }
 
@@ -155,10 +157,11 @@ public class GameEngine : MonoBehaviour {
 
 
         // Define Zone lists
+        _fireList = GameObject.FindGameObjectsWithTag("Fire");
         GameObject[] crossingListGO = GameObject.FindGameObjectsWithTag("Cross");
         
         // Crossing
-        _crossingList= new Zone[crossingListGO.Length];
+        _crossingList = new Zone[crossingListGO.Length];
         for (int i = 0; i < crossingListGO.Length; i++) {
             _crossingList.SetValue(crossingListGO[i].GetComponent<Zone>(), i);
         }

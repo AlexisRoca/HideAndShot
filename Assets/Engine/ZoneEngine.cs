@@ -17,4 +17,30 @@ public class ZoneEngine {
         }
     }
 
+
+    // Fire Light gestion
+    public static void fireLight(Zone cross, GameObject fire) {
+        foreach (Renderer globe in fire.GetComponentsInChildren<Renderer>()) {
+            switch (globe.name) {
+                case "Sphere" :
+                    globe.material.color = (cross.isRed()) ? Color.black : Color.white;
+                    break;
+                case "Sphere_001":
+                    globe.material.color = (cross.isOrange()) ? Color.black : Color.white;
+                    break;
+                case "Sphere_002":
+                    globe.material.color = (cross.isGreen()) ? Color.black : Color.white;
+                    break;
+                case "Sphere_003":
+                    globe.material.color = (cross.isRed()) ? Color.black : Color.white;
+                    break;
+                case "Sphere_004":
+                    globe.material.color = (cross.isOrange()) ? Color.black : Color.white;
+                    break;
+                case "Sphere_005":
+                    globe.material.color = (cross.isGreen()) ? Color.black : Color.white;
+                    break;
+            }
+        }
+    }
 }
