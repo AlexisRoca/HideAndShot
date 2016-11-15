@@ -6,7 +6,7 @@ public class AgentEngine {
     // Leader gestion
     public static void leader (Agent[] leaderList, int radius, float variation, float coefLeader, float coefAvoidObs) {
         foreach (Agent leader in leaderList) {
-            Vector2 leadSteer = AgentSteering.leader(leader._position, leader._velocity, radius, variation, ref leader._wanderPoint) * coefLeader;
+            Vector2 leadSteer = AgentSteering.leader(leader._velocity, radius, variation, ref leader._wanderPoint) * coefLeader;
             Vector2 avoidSteer = AgentSteering.avoid(leader._position, leader._velocity, ref leader._wanderPoint) * coefAvoidObs;
 
             Vector2 force = leadSteer + avoidSteer;
@@ -34,7 +34,7 @@ public class AgentEngine {
     // Drunk gestion
     public static void drunk(Agent[] drunkList, float coefAvoidObs) {
         foreach (Agent drunk in drunkList) {
-            Vector2 drunkSteer = AgentSteering.leader(20, 0.5f, ref drunk._wanderPoint);
+            Vector2 drunkSteer = AgentSteering.leader(drunk._velocity, 20, 0.5f, ref drunk._wanderPoint);
             Vector2 avoidSteer = AgentSteering.avoid(drunk._position, drunk._velocity, ref drunk._wanderPoint) * coefAvoidObs;
 
             Vector2 force = drunkSteer + avoidSteer;

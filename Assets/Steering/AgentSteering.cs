@@ -4,10 +4,11 @@ using System.Collections;
 public class AgentSteering{
 
     // Leader behavior
-    public static Vector2 leader (Vector2 agentPosition, Vector2 agentVelocity, int radiusCircle, float variation, ref float anglePoint) {
+    public static Vector2 leader (Vector2 agentVelocity, int radiusCircle, float variation, ref float anglePoint) {
         anglePoint = (anglePoint + (Random.Range(-1.0f, 1.0f)) * variation) % (2 * Mathf.PI);
 
         Vector2 force = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
+        force += agentVelocity.normalized * radiusCircle;
 
         return force;
     }
