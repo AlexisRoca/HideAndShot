@@ -4,9 +4,9 @@ using System.Collections;
 public class AgentEngine {
 
     // Leader gestion
-    public static void leader (Agent[] leaderList, float coefAvoidObs) {
+    public static void leader (Agent[] leaderList, int radius, float variation, float coefLeader, float coefAvoidObs) {
         foreach (Agent leader in leaderList) {
-            Vector2 leadSteer = AgentSteering.leader(20, 0.2f, ref leader._wanderPoint);
+            Vector2 leadSteer = AgentSteering.leader(leader._position, leader._velocity, radius, variation, ref leader._wanderPoint) * coefLeader;
             Vector2 avoidSteer = AgentSteering.avoid(leader._position, leader._velocity, ref leader._wanderPoint) * coefAvoidObs;
 
             Vector2 force = leadSteer + avoidSteer;

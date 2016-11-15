@@ -6,11 +6,31 @@ public class GameEngine : MonoBehaviour {
     // Define Generic attributes
     public float _timeVariation = 1.0f;
 
-    public float _coefAvoidObs = 50.0f;
-    public float _coefStayOut = 500.0f;
-    public float _coefPlayer = 50.0f;
-    public float _coefSeparation = 100.0f;
-    public float _coefCrossing = 100.0f;
+    public float _coefLeader = 0.0f;
+    public float _coefAvoidObs = 0.0f;
+    public float _coefStayOut = 0.0f;
+    public float _coefPlayer = 0.0f;
+    public float _coefSeparation = 0.0f;
+    public float _coefCrossing = 0.0f;
+
+    // Define Agent attributes
+    public int _leaderMass = 0;
+    public int _leaderSpeed = 0;
+    public int _leaderSteer = 0;
+    public int _leaderRadius = 0;
+    public float _leaderVariation = 0.0f;
+
+    public int _followerMass = 0;
+    public int _followerSpeed = 0;
+    public int _followerSteer = 0;
+
+    public int _drunkMass = 0;
+    public int _drunkSpeed = 0;
+    public int _drunkSteer = 0;
+
+    public int _playerMass = 0;
+    public int _playerSpeed = 0;
+    public int _playerSteer = 0;
 
     // Define Agent lists
     Agent[] _agentList;
@@ -34,6 +54,10 @@ public class GameEngine : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         float dTime = Time.deltaTime * _timeVariation;
+
+        // DEBUG : Update Agent behavior
+        defineAgents();
+
         updateAgentInteraction(dTime);
         updateZoneInteraction(dTime);
         updateGameObject(dTime);
@@ -43,7 +67,7 @@ public class GameEngine : MonoBehaviour {
     // Update all behavior in the scene
     void updateAgentInteraction(float dTime) {
         // Leaders
-        AgentEngine.leader(_leaderList, _coefAvoidObs);
+        AgentEngine.leader(_leaderList, _leaderRadius, _leaderVariation, _coefLeader, _coefAvoidObs);
 
         // Follower
         AgentEngine.follower(_followerList, _coefStayOut, dTime);
@@ -91,22 +115,22 @@ public class GameEngine : MonoBehaviour {
     void defineAgents() {
         // Leaders
         foreach (Agent leader in _leaderList) {
-            leader.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
+            leader.defineAgent(_leaderMass, _leaderSpeed, _leaderSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
         }
 
         // Follower
         foreach (Agent follower in _followerList) {
-            follower.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f));
+            follower.defineAgent(_followerMass, _followerSpeed, _followerSteer, Random.Range(0.0f, 360.0f));
         }
 
         // Drunk
         foreach (Agent drunk in _drunkList) {
-            drunk.defineAgent(1, 20, 100, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
+            drunk.defineAgent(_drunkMass, _drunkSpeed, _drunkSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
         }
 
         // Player
         foreach (Agent player in _playerList) {
-            player.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f));
+            player.defineAgent(_playerMass, _playerSpeed, _playerSteer, Random.Range(0.0f, 360.0f));
         }
     }
 
