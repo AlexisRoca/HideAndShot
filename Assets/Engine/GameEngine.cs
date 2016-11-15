@@ -91,22 +91,22 @@ public class GameEngine : MonoBehaviour {
     void defineAgents() {
         // Leaders
         foreach (Agent leader in _leaderList) {
-            leader.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
+            leader.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
         }
 
         // Follower
         foreach (Agent follower in _followerList) {
-            follower.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f));
+            follower.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f));
         }
 
         // Drunk
         foreach (Agent drunk in _drunkList) {
-            drunk.defineAgent(10, 10, 30, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
+            drunk.defineAgent(1, 20, 100, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
         }
 
         // Player
         foreach (Agent player in _playerList) {
-            player.defineAgent(10, 30, 100, Random.Range(0.0f, 360.0f));
+            player.defineAgent(1, 100, 1000, Random.Range(0.0f, 360.0f));
         }
     }
 
