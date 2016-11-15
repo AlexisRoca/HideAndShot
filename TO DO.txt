@@ -1,0 +1,9 @@
+To Do List :
+	
+	- Régler paramètres déplacement
+	- Gérer le curseur au poil
+	- Ajouter les manettes
+	- Penser aux graphismes des personnages
+	- Mettre en place le gameplay final (nombre de balles, temps de jeu...)
+	- Créer le menu de démarrage
+	- Penser au placement procédural des agents
