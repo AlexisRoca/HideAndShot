@@ -4,7 +4,7 @@ using System.Collections;
 public class AgentSteering{
 
     // Leader behavior
-    public static Vector2 leader (Vector2 agentVelocity, int radiusCircle, float variation, ref float anglePoint) {
+    public static Vector2 leader(Vector2 agentVelocity, int radiusCircle, float variation, ref float anglePoint) {
         anglePoint = (anglePoint + (Random.Range(-1.0f, 1.0f)) * variation) % (2 * Mathf.PI);
 
         Vector2 force = new Vector2(Mathf.Cos(anglePoint), Mathf.Sin(anglePoint)) * radiusCircle;
@@ -15,7 +15,7 @@ public class AgentSteering{
 
 
     // Follow behavior
-    public static Vector2 follow (Vector2 agentPosition, Vector2 targetPosition, Vector2 targetVelocity, float dTime) {
+    public static Vector2 follow(Vector2 agentPosition, Vector2 targetPosition, Vector2 targetVelocity) {
         Vector2 predictedLeaderPosition = targetPosition;//;+ targetVelocity//; *dTime;
         Vector2 force = predictedLeaderPosition - agentPosition;
 
@@ -39,7 +39,7 @@ public class AgentSteering{
 
 
     // Avoid behavior
-    public static Vector2 avoid (Vector2 agentPosition, Vector2 agentVelocity, ref float wander) {
+    public static Vector2 avoid(Vector2 agentPosition, Vector2 agentVelocity, ref float wander) {
         Vector2 force = Vector2.zero;
 
         Vector3 origine = new Vector3(agentPosition.x, 10.0f, agentPosition.y);
@@ -59,7 +59,7 @@ public class AgentSteering{
 
 
     // Separation behavior
-    public static Vector2 separation (Vector2 agentPosition, Vector2 [] neighboursPosition) {
+    public static Vector2 separation(Vector2 agentPosition, Vector2 [] neighboursPosition) {
         Vector2 force = Vector2.zero;
 
         // For each agent
@@ -77,7 +77,7 @@ public class AgentSteering{
 
 
     // Hide Player control
-    public static Vector2 player (Vector2 agentVelocity) {
+    public static Vector2 player(Vector2 agentVelocity) {
         Vector2 force = Vector2.zero;
 
         force += (Input.GetKey(KeyCode.Z)) ? new Vector2(0, 1) : Vector2.zero;

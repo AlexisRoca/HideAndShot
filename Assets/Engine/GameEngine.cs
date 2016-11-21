@@ -32,11 +32,9 @@ public class GameEngine : MonoBehaviour {
     public int _playerSpeed = 0;
     public int _playerSteer = 0;
 
+    AgentEngine m_agentEngine;
+
     // Define Agent lists
-    Agent[] _agentList;
-    Agent[] _leaderList;
-    Agent[] _followerList;
-    Agent[] _drunkList;
     Agent[] _playerList;
 
     // Define Zone lists
@@ -44,67 +42,66 @@ public class GameEngine : MonoBehaviour {
     GameObject[] _fireList;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
+        m_agentEngine = new AgentEngine();
+        m_agentEngine.initAgents();
+
         collectGameObjects();
-        defineAgents();
         defineZones();
     }
 
 
     // Update is called once per frame
-    void Update () {
-        float dTime = Time.deltaTime * _timeVariation;
+    void Update()
+    {
+        float deltaTime = Time.deltaTime * _timeVariation;
+   
+        m_agentEngine.update(deltaTime);
 
         // DEBUG : Update Agent behavior
-        defineAgents();
+        //defineAgents();
 
-        updateAgentInteraction(dTime);
-        updateZoneInteraction(dTime);
-        updateGameObject(dTime);
+        //updateAgentInteraction(deltaTime);
+        //updateZoneInteraction(deltaTime);
+        //updateGameObject(deltaTime);
     }
 
 
     // Update all behavior in the scene
-    void updateAgentInteraction(float dTime) {
-        // Leaders
-        AgentEngine.leader(_leaderList, _leaderRadius, _leaderVariation, _coefLeader, _coefAvoidObs);
-
-        // Follower
-        AgentEngine.follower(_followerList, _coefStayOut, dTime);
-
-        // Drunk
-        AgentEngine.drunk(_drunkList, _coefAvoidObs);
-
-        // Player
-        AgentEngine.player(_playerList, _coefPlayer);
-
-        // Separation
-        AgentEngine.separation(_followerList, _coefSeparation);
+    void updateAgentInteraction(float dTime)
+    {
+        //// Player
+        //AgentEngine.player(_playerList, _coefPlayer);
     }
 
 
     // Update all behavior in the scene
-    void updateZoneInteraction(float dTime) {
-        // Crossing
-        ZoneEngine.crossing(_crossingList, _leaderList, _coefCrossing);
-        ZoneEngine.crossing(_crossingList, _followerList, _coefCrossing);
+    void updateZoneInteraction(float dTime)
+    {
+        //// Crossing
+        //ZoneEngine.crossing(_crossingList, _leaderList, _coefCrossing);
+        //ZoneEngine.crossing(_crossingList, _followerList, _coefCrossing);
     }
 
 
     // Update the agent in the game world
-    void updateGameObject(float dTime) {
-        // All agent
-        foreach (Agent agent in _agentList) {
-            agent.updateAgent(dTime);
+    void updateGameObject(float dTime)
+    {
+        //// All agent
+        //foreach(Agent agent in _agentList)
+        //{
+        //    agent.updateAgent(dTime);
 
-            agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
-            agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
+        //    agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
+        //    agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
 
-            if (agent.GetComponent<Animator>() != null) agent.GetComponent<Animator>().Play("Take 001");
-        }
+        //    if (agent.GetComponent<Animator>() != null) agent.GetComponent<Animator>().Play("Take 001");
+        //}
 
         // All crossing
-        for (int i = 0; i < _crossingList.Length; i++) {
+        for(int i=0; i < _crossingList.Length; i++)
+        {
             _crossingList[i].updateTime(dTime);
             ZoneEngine.fireLight(_crossingList[i], _fireList[i]);
         }
@@ -113,69 +110,50 @@ public class GameEngine : MonoBehaviour {
 
     // Define the agent properties
     void defineAgents() {
-        // Leaders
-        foreach (Agent leader in _leaderList) {
-            leader.defineAgent(_leaderMass, _leaderSpeed, _leaderSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
-        }
+        //// Leaders
+        //foreach (Agent leader in _leaderList) {
+        //    leader.defineAgent(_leaderMass, _leaderSpeed, _leaderSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
+        //}
 
-        // Follower
-        foreach (Agent follower in _followerList) {
-            follower.defineAgent(_followerMass, _followerSpeed, _followerSteer, Random.Range(0.0f, 360.0f));
-        }
+        //// Follower
+        //foreach (Agent follower in _followerList) {
+        //    follower.defineAgent(_followerMass, _followerSpeed, _followerSteer, Random.Range(0.0f, 360.0f));
+        //}
 
-        // Drunk
-        foreach (Agent drunk in _drunkList) {
-            drunk.defineAgent(_drunkMass, _drunkSpeed, _drunkSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
-        }
+        //// Drunk
+        //foreach (Agent drunk in _drunkList) {
+        //    drunk.defineAgent(_drunkMass, _drunkSpeed, _drunkSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
+        //}
 
         // Player
-        foreach (Agent player in _playerList) {
+        foreach(Agent player in _playerList)
+        {
             player.defineAgent(_playerMass, _playerSpeed, _playerSteer, Random.Range(0.0f, 360.0f));
         }
     }
 
 
     // Define the zone properties
-    void defineZones() {
+    void defineZones()
+    {
         // Crossing
-        foreach (Zone crossing in _crossingList) {
+        foreach(Zone crossing in _crossingList)
+        {
             crossing.defineTime(20);
         }
     }
 
 
     // Collect all game objects in the scene
-    void collectGameObjects () {
+    void collectGameObjects ()
+    {
         // Define Game Objects lists
-        GameObject[] leaderListGO = GameObject.FindGameObjectsWithTag("Leader");
-        GameObject[] followerListGO = GameObject.FindGameObjectsWithTag("Follower");
-        GameObject[] drunkListGO = GameObject.FindGameObjectsWithTag("Drunk");
         GameObject[] playerListGO = GameObject.FindGameObjectsWithTag("PlayerHide");
-
-        // Define Agent lists
-        _agentList = GameObject.FindObjectsOfType<Agent>();
-        
-        // Leaders
-        _leaderList = new Agent[leaderListGO.Length];
-        for (int i=0; i<leaderListGO.Length; i++) {
-            _leaderList.SetValue(leaderListGO[i].GetComponent<Agent>(), i);
-        }
-
-        // Follower
-        _followerList = new Agent[followerListGO.Length];
-        for (int i = 0; i < followerListGO.Length; i++) {
-            _followerList.SetValue(followerListGO[i].GetComponent<Agent>(), i);
-        }
-
-        // Drunk
-        _drunkList = new Agent[drunkListGO.Length];
-        for (int i = 0; i < drunkListGO.Length; i++) {
-            _drunkList.SetValue(drunkListGO[i].GetComponent<Agent>(), i);
-        }
 
         // Player
         _playerList = new Agent[playerListGO.Length];
-        for (int i = 0; i < playerListGO.Length; i++) {
+        for(int i=0; i < playerListGO.Length; i++)
+        {
             _playerList.SetValue(playerListGO[i].GetComponent<Agent>(), i);
         }
 
@@ -186,7 +164,8 @@ public class GameEngine : MonoBehaviour {
         
         // Crossing
         _crossingList = new Zone[crossingListGO.Length];
-        for (int i = 0; i < crossingListGO.Length; i++) {
+        for(int i=0; i < crossingListGO.Length; i++)
+        {
             _crossingList.SetValue(crossingListGO[i].GetComponent<Zone>(), i);
         }
     }
