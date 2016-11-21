@@ -6,28 +6,6 @@ public class GameEngine : MonoBehaviour {
     // Define Generic attributes
     public float _timeVariation = 1.0f;
 
-    public float _coefLeader = 0.0f;
-    public float _coefAvoidObs = 0.0f;
-    public float _coefStayOut = 0.0f;
-    public float _coefPlayer = 0.0f;
-    public float _coefSeparation = 0.0f;
-    public float _coefCrossing = 0.0f;
-
-    // Define Agent attributes
-    public int _leaderMass = 0;
-    public int _leaderSpeed = 0;
-    public int _leaderSteer = 0;
-    public int _leaderRadius = 0;
-    public float _leaderVariation = 0.0f;
-
-    public int _followerMass = 0;
-    public int _followerSpeed = 0;
-    public int _followerSteer = 0;
-
-    public int _drunkMass = 0;
-    public int _drunkSpeed = 0;
-    public int _drunkSteer = 0;
-
     public int _playerMass = 0;
     public int _playerSpeed = 0;
     public int _playerSteer = 0;
@@ -44,7 +22,7 @@ public class GameEngine : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        m_agentEngine = new AgentEngine();
+        m_agentEngine = this.GetComponent<AgentEngine>();
         m_agentEngine.initAgents();
 
         collectGameObjects();
@@ -88,17 +66,6 @@ public class GameEngine : MonoBehaviour {
     // Update the agent in the game world
     void updateGameObject(float dTime)
     {
-        //// All agent
-        //foreach(Agent agent in _agentList)
-        //{
-        //    agent.updateAgent(dTime);
-
-        //    agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
-        //    agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
-
-        //    if (agent.GetComponent<Animator>() != null) agent.GetComponent<Animator>().Play("Take 001");
-        //}
-
         // All crossing
         for(int i=0; i < _crossingList.Length; i++)
         {
@@ -109,22 +76,8 @@ public class GameEngine : MonoBehaviour {
 
 
     // Define the agent properties
-    void defineAgents() {
-        //// Leaders
-        //foreach (Agent leader in _leaderList) {
-        //    leader.defineAgent(_leaderMass, _leaderSpeed, _leaderSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2*Mathf.PI));
-        //}
-
-        //// Follower
-        //foreach (Agent follower in _followerList) {
-        //    follower.defineAgent(_followerMass, _followerSpeed, _followerSteer, Random.Range(0.0f, 360.0f));
-        //}
-
-        //// Drunk
-        //foreach (Agent drunk in _drunkList) {
-        //    drunk.defineAgent(_drunkMass, _drunkSpeed, _drunkSteer, Random.Range(0.0f, 360.0f), Random.Range(0.0f, 2 * Mathf.PI));
-        //}
-
+    void defineAgents()
+    {
         // Player
         foreach(Agent player in _playerList)
         {
@@ -156,7 +109,6 @@ public class GameEngine : MonoBehaviour {
         {
             _playerList.SetValue(playerListGO[i].GetComponent<Agent>(), i);
         }
-
 
         // Define Zone lists
         _fireList = GameObject.FindGameObjectsWithTag("Fire");
