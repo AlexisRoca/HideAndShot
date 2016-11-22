@@ -74,20 +74,17 @@ public class Agent : MonoBehaviour {
 
 
     // Find the nearest agent taged T
-    public Agent findNearest (string Tag) {
-        // Get all Agent taged T in the scene
-        GameObject[] agentList = GameObject.FindGameObjectsWithTag(Tag);
-
+    public Agent findNearest (Agent[] agentList) {
         // Define distance and GameObject for the nearest agent
         Agent nearestAgent = null;
         float nearestDistance = float.MaxValue;
 
         // Find the nearest to follow
-        foreach (GameObject currentAgent in agentList) {
-            float currentDistance = (_position - currentAgent.GetComponent<Agent>()._position).magnitude;
+        foreach (Agent currentAgent in agentList) {
+            float currentDistance = (_position - currentAgent._position).magnitude;
 
             if (currentDistance < nearestDistance) {
-                nearestAgent = currentAgent.GetComponent<Agent>();
+                nearestAgent = currentAgent;
                 nearestDistance = currentDistance;
             }
         }
@@ -97,9 +94,8 @@ public class Agent : MonoBehaviour {
 
 
     // Find neighbours agent
-    public Agent[] findNeighbours(float distance) {
+    public Agent[] findNeighbours(Agent[] agentList, float distance) {
         // Get all Agent taged T in the scene
-        Agent[] agentList = GameObject.FindObjectsOfType<Agent>();
         bool[] inNeighbourhood = new bool[agentList.Length];
 
         int nbNeighbours = 0;

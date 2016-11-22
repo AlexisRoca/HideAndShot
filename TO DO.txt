@@ -1,6 +1,6 @@
 To Do List :
 	
-	- Régler paramètres déplacement
+	- Régler paramètres déplacement --> DONE
 	- Gérer le curseur au poil
 	- Ajouter les manettes
 	- Penser aux graphismes des personnages

@@ -15,8 +15,8 @@ public class AgentSteering{
 
 
     // Follow behavior
-    public static Vector2 follow (Vector2 agentPosition, Vector2 targetPosition, Vector2 targetVelocity, float dTime) {
-        Vector2 predictedLeaderPosition = targetPosition;//;+ targetVelocity//; *dTime;
+    public static Vector2 follow (Vector2 agentPosition, Vector2 targetPosition, Vector2 targetVelocity) {
+        Vector2 predictedLeaderPosition = targetPosition;
         Vector2 force = predictedLeaderPosition - agentPosition;
 
         return force;
