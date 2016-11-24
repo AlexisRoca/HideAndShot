@@ -1,35 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AgentEngine {
+public class AgentEngine : MonoBehaviour {
 
-    public float _coefLeader = 0.0f;
-    public float _coefAvoidObs = 0.0f;
-    public float _coefStayOut = 0.0f;
-    public float _coefPlayer = 0.0f;
-    public float _coefSeparation = 0.0f;
-    public float _coefCrossing = 0.0f;
+    public float _coefLeader = 1.0f;
+    public float _coefAvoidObs = 1.0f;
+    public float _coefStayOut = 50.0f;
+    public float _coefPlayer = 1.0f;
+    public float _coefSeparation = 1.0f;
+    public float _coefCrossing = 1.0f;
 
     // Define Agent attributes
-    public int _leaderMass = 0;
-    public int _leaderSpeed = 0;
-    public int _leaderSteer = 0;
-    public int _leaderRadius = 0;
-    public float _leaderVariation = 0.0f;
+    public int _leaderMass = 10;
+    public int _leaderSpeed = 50;
+    public int _leaderSteer = 100;
+    public int _leaderRadius = 10;
+    public float _leaderVariation = 0.001f;
 
-    public int _followerMass = 0;
-    public int _followerSpeed = 0;
-    public int _followerSteer = 0;
+    public int _followerMass = 10;
+    public int _followerSpeed = 50;
+    public int _followerSteer = 100;
 
-    public int _drunkMass = 0;
-    public int _drunkSpeed = 0;
-    public int _drunkSteer = 0;
+    public int _drunkMass = 10;
+    public int _drunkSpeed = 20;
+    public int _drunkSteer = 30;
 
     // Define Agent lists
-    private Agent[] m_agentList;
-    private Agent[] m_leaderList;
-    private Agent[] m_followerList;
-    private Agent[] m_drunkList;
+    public Agent[] m_agentList;
+    public Agent[] m_leaderList;
+    public Agent[] m_followerList;
+    public Agent[] m_drunkList;
 
 
     public void initAgents()
@@ -162,7 +162,6 @@ public class AgentEngine {
         foreach(Agent agent in m_agentList)
         {
             agent.updateAgent(deltaTime);
-
             agent.transform.rotation = Quaternion.Euler(0.0f,agent._orientation,0.0f);
             agent.transform.position = new Vector3(agent._position.x,agent.transform.position.y,agent._position.y);
 
