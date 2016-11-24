@@ -20,7 +20,8 @@ public class Agent : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
+    void Awake()
+    {
         _mass = 50;
         _maxSpeed = 30;
         _maxSteer = 1000;

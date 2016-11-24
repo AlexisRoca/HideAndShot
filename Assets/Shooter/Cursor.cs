@@ -48,6 +48,18 @@ public class Cursor : MonoBehaviour
         speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
         speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
 
+        speed.x = Input.GetAxis("Horizontal_J1");
+        speed.y = Input.GetAxis("Vertical_J1");
+
+        Debug.Log(
+          Input.GetAxisRaw("Vertical_J1") +
+          " : " +
+          Input.GetAxis("Vertical_J1")
+        );
+
+
+            Debug.Log(speed);
+
         Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
         clampCursorOnCanvas(ref newPosition);
         m_cursor.transform.localPosition = newPosition;
