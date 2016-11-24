@@ -1,55 +1,68 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ZoneEngine {
+public class ZoneEngine : MonoBehaviour {
+
+    // Define steering coefficient
+    public float _coefCrossing = 300.0f;
+    public int _timeCrossing = 20;
 
     // Define Zone lists
     public Zone[] _crossingList;
     public GameObject[] _fireList;
 
-    // Define steering coefficient
-    float _coefCrossing = 300.0f;
-
-
     // Constructor
-    public ZoneEngine() {
-        // Collect all agent in scene
-        collectGameObjects();
-    }
-
-
-    // Define the zone properties
-    public void defineZones() {
-        // Crossing
-        foreach (Zone crossing in _crossingList) {
-            crossing.defineTime(20);
-        }
-    }
-
-
-    // Update all behavior in the scene
-    public void updateZoneInteraction(Agent[] agentList, float dTime) {
-        // Crossing
-        crossing(agentList);
-    }
-
-
-    // Collect all game objects in the scene
-    void collectGameObjects() {
+    public void initZones() {
         // Define Zone lists
         _fireList = GameObject.FindGameObjectsWithTag("Fire");
         GameObject[] crossingListGO = GameObject.FindGameObjectsWithTag("Cross");
 
         // Crossing
         _crossingList = new Zone[crossingListGO.Length];
-        for (int i = 0; i < crossingListGO.Length; i++) {
+        for (int i = 0; i < crossingListGO.Length; i++)
+        {
             _crossingList.SetValue(crossingListGO[i].GetComponent<Zone>(), i);
+        }
+    }
+
+    public void update(Agent[] agentList, float deltaTime)
+    {
+        defineZoneProperties();
+
+        updateZones(agentList, deltaTime);
+    }
+
+
+    // Define the zone properties
+    public void defineZoneProperties() {
+        // Crossing
+        foreach (Zone crossing in _crossingList)
+        {
+            crossing.defineTime(_timeCrossing);
+        }
+    }
+
+
+    // Update all behavior in the scene
+    public void updateZones(Agent[] agentList, float dTime) {
+        // Crossing
+        foreach (Zone crossing in _crossingList)
+        {
+            crossing.updateTime(dTime);
+        }
+
+        crossingForce(agentList);
+
+        // Fire Light
+        for (int i = 0; i < _crossingList.Length; i++)
+        {
+            fireLight(_crossingList[i], _fireList[i]);
         }
     }
 
 
     // Crossing gestion
-    void crossing(Agent[] agentList) {
+    private void crossingForce(Agent[] agentList) {
         foreach (Zone crossing in _crossingList) {
             foreach (Agent agent in agentList) {
                 if (crossing.isInZone(agent._position)) {
@@ -64,7 +77,7 @@ public class ZoneEngine {
 
 
     // Fire Light gestion
-    public void fireLight(Zone cross, GameObject fire) {
+    private void fireLight(Zone cross, GameObject fire) {
         foreach (Renderer globe in fire.GetComponentsInChildren<Renderer>()) {
             switch (globe.name) {
                 case "Sphere" :

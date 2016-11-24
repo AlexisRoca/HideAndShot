@@ -36,12 +36,21 @@ public class Agent : MonoBehaviour {
 
     // Define personal agent
     public void defineAgent(int mass, int maxSpeed, int maxSteer, float orientation, float wander = 0.0f) {
-        _mass = mass;
+        _mass = (mass == 0) ? 1 : mass;
         _maxSpeed = maxSpeed;
         _maxSteer = maxSteer;
         _orientation = orientation;
 
         _wanderPoint = wander;
+    }
+
+
+    // Re-Define personal agent
+    public void redefineAgent(int mass, int maxSpeed, int maxSteer)
+    {
+        _mass = (mass == 0) ? 1 : mass;
+        _maxSpeed = maxSpeed;
+        _maxSteer = maxSteer;
     }
 
 
