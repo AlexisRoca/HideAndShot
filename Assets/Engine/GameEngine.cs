@@ -67,11 +67,11 @@ public class GameEngine : MonoBehaviour {
     void updateGameObject(float dTime)
     {
         // All crossing
-        for(int i=0; i < _crossingList.Length; i++)
-        {
-            _crossingList[i].updateTime(dTime);
-            ZoneEngine.fireLight(_crossingList[i], _fireList[i]);
-        }
+        //for(int i=0; i < _crossingList.Length; i++)
+        //{
+        //    _crossingList[i].updateTime(dTime);
+        //    ZoneEngine.fireLight(_crossingList[i], _fireList[i]);
+        //}
     }
 
 
