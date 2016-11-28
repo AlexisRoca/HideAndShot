@@ -130,7 +130,7 @@ public class AgentEngine : MonoBehaviour {
     {
         foreach(Agent follower in m_followerList)
         {
-            Agent nearestLeader = findNearest(follower, "Leader");
+            Agent nearestLeader = findNearest(follower, m_leaderList);
 
             Vector2 followSteer = AgentSteering.follow(follower._position, nearestLeader._position, nearestLeader._velocity);
             Vector2 stayOutSteer = AgentSteering.stayOut(follower._position, nearestLeader._position, nearestLeader._velocity) * _coefStayOut;
@@ -179,34 +179,36 @@ public class AgentEngine : MonoBehaviour {
         // All agent
         foreach(Agent agent in m_agentList)
         {
-            agent.updateAgent(deltaTime);
-            agent.transform.rotation = Quaternion.Euler(0.0f,agent._orientation,0.0f);
-            agent.transform.position = new Vector3(agent._position.x,agent.transform.position.y,agent._position.y);
+            if (! agent._isDead)
+            {
+                agent.updateAgent(deltaTime);
+                agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
+                agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
+            } else {
+                agent.isBlooding(deltaTime);
+            }
         }
     }
 
 
     // Find the nearest agent taged T
-    public Agent findNearest(Agent agent, string Tag)
+    public Agent findNearest(Agent agent, Agent[] nearestList)
     {
-        // Get all Agent taged T in the scene
-        GameObject [] agentList = GameObject.FindGameObjectsWithTag(Tag);
-
         // Define distance and GameObject for the nearest agent
         Agent nearestAgent = null;
         float nearestDistance = float.MaxValue;
 
         // Find the nearest to follow
-        foreach(GameObject currentAgent in agentList)
+        foreach(Agent currentAgent in nearestList)
         {
-            if(currentAgent.Equals(agent))
+            if(currentAgent.Equals(agent) || currentAgent._isDead)
                 continue;
 
-            float currentDistance = (agent._position - currentAgent.GetComponent<Agent>()._position).magnitude;
+            float currentDistance = (agent._position - currentAgent._position).magnitude;
 
             if(currentDistance < nearestDistance)
             {
-                nearestAgent = currentAgent.GetComponent<Agent>();
+                nearestAgent = currentAgent;
                 nearestDistance = currentDistance;
             }
         }

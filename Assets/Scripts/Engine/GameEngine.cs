@@ -15,12 +15,12 @@ public class GameEngine : MonoBehaviour {
     AgentEngine m_agentEngine;
     ZoneEngine m_zoneEngine;
 
-    // Define Agent lists
+    // Define Player lists
     Agent[] _playerList;
 
 
-    // Use this for initialization
-    void Start()
+    // Load the Game
+    public void loadGame()
     {
         collectGameObjects();
         definePlayers();
@@ -32,9 +32,8 @@ public class GameEngine : MonoBehaviour {
         m_zoneEngine.initZones();
     }
 
-
-    // Update is called once per frame
-    void Update()
+    // Update the Game
+    public void updateGame()
     {
         float deltaTime = Time.deltaTime * _timeVariation;
 
@@ -55,6 +54,7 @@ public class GameEngine : MonoBehaviour {
     }
 
 
+
     // Define the agent properties
     void definePlayers()
     {
@@ -65,7 +65,7 @@ public class GameEngine : MonoBehaviour {
 
 
     // Player gestion
-    private void updatePlayers()
+    void updatePlayers()
     {
         foreach (Agent player in _playerList)
         {

@@ -10,6 +10,12 @@ public class Agent : MonoBehaviour {
     public int _maxSteer { get; set; }
     public float _wanderPoint = 0.0f;
 
+    // Dead attributes
+    public bool _isDead = false;
+    public float _timer = 0.0f;
+    public float _timeBlooding = 5.0f;
+    Vector3 bloodDirection = Vector3.zero;
+
     // Displacement attributes
     public float _orientation { get; set; }
     public Vector2 _position { get; set; }
@@ -22,13 +28,15 @@ public class Agent : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        _mass = 50;
-        _maxSpeed = 30;
-        _maxSteer = 1000;
+        // _mass = 50;
+        // _maxSpeed = 30;
+        // _maxSteer = 1000;
 
         _orientation = 0.0f;
         _position = new Vector2(transform.position.x, transform.position.z);
         _velocity = Vector2.zero;
+
+        this.GetComponent<Rigidbody>().mass = 100;
 
         _steeringForce = Vector2.zero;
     }
@@ -83,58 +91,43 @@ public class Agent : MonoBehaviour {
     }
 
 
-    // Find the nearest agent taged T
-    public Agent findNearest (Agent[] agentList) {
-        // Define distance and GameObject for the nearest agent
-        Agent nearestAgent = null;
-        float nearestDistance = float.MaxValue;
-
-        // Find the nearest to follow
-        foreach (Agent currentAgent in agentList) {
-            float currentDistance = (_position - currentAgent._position).magnitude;
-
-            if (currentDistance < nearestDistance) {
-                nearestAgent = currentAgent;
-                nearestDistance = currentDistance;
+    // Blooding agent
+    public void isBlooding(float dTime)
+    {
+        if(_timer < _timeBlooding)
+        {
+            _timer += dTime;
+            Blood blood = this.gameObject.AddComponent<Blood>();
+            blood.create(this.gameObject.transform.position, bloodDirection);
+        }
+        else if (this.gameObject.GetComponent<Blood>())
+        {
+            Blood currentBlood = this.gameObject.GetComponent<Blood>();
+            if(currentBlood._canBeDestroy)
+            {
+                currentBlood.destroy();
+                Destroy(currentBlood);
             }
         }
-
-        return nearestAgent;
     }
 
 
-    // Find neighbours agent
-    public Agent[] findNeighbours(Agent[] agentList, float distance) {
-        // Get all Agent taged T in the scene
-        bool[] inNeighbourhood = new bool[agentList.Length];
+    // Call while there is a collision
+    void OnCollisionEnter(Collision collision)
+    {
+        if (_isDead) return;
 
-        int nbNeighbours = 0;
+        if (collision.gameObject.tag == "KillAgent")
+        {
+            _isDead = true;
 
-        // Find the number of contributors
-        for (int i=0; i<agentList.Length; i++) {
-            if (agentList[i].Equals(this)) continue;
+            gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
 
-            float currentDistance = (_position - agentList[i]._position).magnitude;
+            _steeringForce += new Vector2(collision.impulse.x, collision.impulse.z) * 100.0f;
+            updateAgent(Time.deltaTime);
 
-            if (currentDistance < distance) {
-                nbNeighbours++;
-                inNeighbourhood[i] = true;
-            } else {
-                inNeighbourhood[i] = false;
-            }
+            // Blood emmision
+            bloodDirection = collision.relativeVelocity;
         }
-
-        Agent[] neighbours = new Agent[nbNeighbours];
-        int it = 0;
-
-        // Create the neighbour list
-        for (int i=0; i<agentList.Length; i++) {
-            if (inNeighbourhood[i]) {
-                neighbours.SetValue(agentList[i], it);
-                it++;
-            }
-        }
-
-        return neighbours;
     }
 }
