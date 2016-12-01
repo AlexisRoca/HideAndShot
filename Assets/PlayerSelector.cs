@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerSelector : MonoBehaviour
@@ -48,9 +49,7 @@ public class PlayerSelector : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
-        int gamepadNb = Input.GetJoystickNames().Length;
-
-        for(int i=0; i< gamepadNb; i++)
+        for(int i=0; i< m_gamepads.Length; i++)
         {
             string currentGamepad = "LeftJoystickY_P" + m_gamepads[i].m_id;
             float speedY = Input.GetAxis(currentGamepad);
@@ -86,9 +85,22 @@ public class PlayerSelector : MonoBehaviour
 
         if(!m_hidePlayerSelectionPositionFree)
         {
-            if(Input.GetKeyDown("A_P" + m_currentSelectedGamepad.m_id))
+            if(m_currentSelectedGamepad.m_substate == Gamepad.Substate.Static)
             {
+                if(Input.GetButtonDown("A_P" + m_currentSelectedGamepad.m_id))
+                {
+                    PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id;
 
+                    PlayerSelection_Persistent.HidePlayers = new string[m_gamepads.Length - 1];
+                    for(int i=0; i<m_gamepads.Length; i++)
+                    {
+                        if(m_gamepads[i] == m_currentSelectedGamepad)
+                            continue;
+                        PlayerSelection_Persistent.HidePlayers[i] = m_gamepads[i].m_id;
+                    }
+
+                    SceneManager.LoadScene("Scene_1");
+                }
             }
         }
     }
