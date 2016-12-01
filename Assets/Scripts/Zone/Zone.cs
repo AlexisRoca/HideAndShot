@@ -55,7 +55,7 @@ public class Zone : MonoBehaviour {
             _allowAgent = !_allowAgent;
         }
 
-        GetComponent<Renderer>().material.color = (_allowAgent) ? Color.green : Color.red;
+        // GetComponent<Renderer>().material.color = (_allowAgent) ? Color.green : Color.red;
     }
 
 
