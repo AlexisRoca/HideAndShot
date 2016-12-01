@@ -7,13 +7,17 @@ public class Cursor : MonoBehaviour
     GameObject m_cursor;
     GameObject m_canvas;
     public float m_sensibility = 50.0f;
+    public Controller m_controller;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
     {
         m_canvas = GameObject.FindGameObjectWithTag("Canvas");
         m_target = Resources.Load<Sprite>("Sprites/Targets/redSniperTarget");
         m_cursor = new GameObject("Cursor");
+
+        m_controller = new Controller();
+        m_controller.gamepadId = 1;
 
         SpriteRenderer renderer = m_cursor.AddComponent<SpriteRenderer>();
         renderer.sprite = m_target;
@@ -39,7 +43,7 @@ public class Cursor : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
         Vector2 speed = Vector2.zero;
 
@@ -48,17 +52,8 @@ public class Cursor : MonoBehaviour
         speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
         speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
 
-        speed.x = Input.GetAxis("Horizontal_J1");
-        speed.y = Input.GetAxis("Vertical_J1");
-
-        Debug.Log(
-          Input.GetAxisRaw("Vertical_J1") +
-          " : " +
-          Input.GetAxis("Vertical_J1")
-        );
-
-
-            Debug.Log(speed);
+        speed.x = m_controller.horizontalAxis();
+        speed.y = m_controller.verticalAxis();
 
         Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
         clampCursorOnCanvas(ref newPosition);
