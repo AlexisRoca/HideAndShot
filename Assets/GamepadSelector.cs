@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Gamepad : MonoBehaviour
+public class GamepadSelector : MonoBehaviour
 {
     public enum Substate
     {
