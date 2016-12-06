@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Gamepad : MonoBehaviour
+public class GamepadSelector : MonoBehaviour
 {
     public enum Substate
     {
@@ -57,8 +57,8 @@ public class Gamepad : MonoBehaviour
             break;
 
             case Substate.Moving:
-                if((Mathf.Abs(m_speed.x) < 0.1f)
-                && (Mathf.Abs(m_speed.y) < 0.1f))
+                if(((Mathf.Abs(m_speed.x) < 0.1f) && (Mathf.Abs(m_speed.y) < 0.1f))
+                   && ((Mathf.Abs(m_wantedPosition.x-transform.position.x)<0.2f) && ((m_wantedPosition.y - transform.position.y)<0.2f)))
                     return Substate.Static;
             break;
         }

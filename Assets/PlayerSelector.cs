@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerSelector : MonoBehaviour
@@ -15,8 +16,8 @@ public class PlayerSelector : MonoBehaviour
     public float gamepadMaxSpeed;
 
     private bool m_hidePlayerSelectionPositionFree = true;
-    private Gamepad [] m_gamepads;
-    private Gamepad m_currentSelectedGamepad;
+    private GamepadSelector [] m_gamepads;
+    private GamepadSelector m_currentSelectedGamepad;
 
     // Use this for initialization
     void Start()
@@ -24,7 +25,7 @@ public class PlayerSelector : MonoBehaviour
         textToStart = GameObject.Find("StartGameText").GetComponent<Text>();
 
         int gamepadNb = Input.GetJoystickNames().Length;
-        m_gamepads = new Gamepad[gamepadNb];
+        m_gamepads = new GamepadSelector[gamepadNb];
 
         for(int i=0; i<4; i++)
         {
@@ -32,7 +33,7 @@ public class PlayerSelector : MonoBehaviour
 
             if(i<gamepadNb)
             {
-                m_gamepads[i] = gamepadSprite. AddComponent<Gamepad>();
+                m_gamepads[i] = gamepadSprite. AddComponent<GamepadSelector>();
                 m_gamepads[i].m_id = (i+1).ToString();
                 m_gamepads[i].m_initialPosition = gamepadSprite.transform.position;
                 m_gamepads[i].m_maxSpeed = gamepadMaxSpeed;
@@ -48,9 +49,7 @@ public class PlayerSelector : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
-        int gamepadNb = Input.GetJoystickNames().Length;
-
-        for(int i=0; i< gamepadNb; i++)
+        for(int i=0; i< m_gamepads.Length; i++)
         {
             string currentGamepad = "LeftJoystickY_P" + m_gamepads[i].m_id;
             float speedY = Input.GetAxis(currentGamepad);
@@ -59,7 +58,7 @@ public class PlayerSelector : MonoBehaviour
             {
                 if(speedY > 0)
                 {
-                    m_gamepads[i].m_substate = Gamepad.Substate.Moving;
+                    m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
                     m_gamepads[i].m_wantedPosition = CursorPlayerSelectionPosition;
                     m_currentSelectedGamepad = m_gamepads[i];
 
@@ -73,7 +72,7 @@ public class PlayerSelector : MonoBehaviour
                 if((m_currentSelectedGamepad == m_gamepads[i])
                 && (speedY < 0))
                 {
-                    m_gamepads[i].m_substate = Gamepad.Substate.Moving;
+                    m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
                     m_gamepads[i].m_wantedPosition = m_gamepads[i].m_initialPosition;
                     m_currentSelectedGamepad = null;
                     m_hidePlayerSelectionPositionFree = true;
@@ -86,9 +85,22 @@ public class PlayerSelector : MonoBehaviour
 
         if(!m_hidePlayerSelectionPositionFree)
         {
-            if(Input.GetKeyDown("A_P" + m_currentSelectedGamepad.m_id))
+            if(m_currentSelectedGamepad.m_substate == GamepadSelector.Substate.Static)
             {
+                if(Input.GetButtonDown("A_P" + m_currentSelectedGamepad.m_id))
+                {
+                    PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id;
 
+                    PlayerSelection_Persistent.HidePlayers = new string[m_gamepads.Length - 1];
+                    for(int i=0; i<m_gamepads.Length; i++)
+                    {
+                        if(m_gamepads[i] == m_currentSelectedGamepad)
+                            continue;
+                        PlayerSelection_Persistent.HidePlayers[i] = m_gamepads[i].m_id;
+                    }
+
+                    SceneManager.LoadScene("Scene_1");
+                }
             }
         }
     }
