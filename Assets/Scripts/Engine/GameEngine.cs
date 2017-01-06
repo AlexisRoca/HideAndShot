@@ -6,7 +6,7 @@ public class GameEngine : MonoBehaviour {
     // Define Generic attributes
     public float _timeVariation = 1.0f;
 
-    public float _coefPlayer = 1.0f;
+    public float _coefPlayer = 100.0f;
 
     public int _playerMass = 10;
     public int _playerSpeed = 50;
@@ -25,10 +25,10 @@ public class GameEngine : MonoBehaviour {
         collectGameObjects();
         definePlayers();
 
-        m_agentEngine = this.GetComponent<AgentEngine>();
+        m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
         m_agentEngine.initAgents();
 
-        m_zoneEngine = this.GetComponent<ZoneEngine>();
+        m_zoneEngine = this.gameObject.AddComponent<ZoneEngine>();
         m_zoneEngine.initZones();
     }
 
@@ -71,7 +71,7 @@ public class GameEngine : MonoBehaviour {
         {
             Vector2 playSteer = AgentSteering.player(player._velocity);
 
-            player._steeringForce += playSteer;
+            player._steeringForce += playSteer * _coefPlayer;
         }
     }
 

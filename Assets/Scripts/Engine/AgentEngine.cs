@@ -4,9 +4,9 @@ using System.Collections;
 public class AgentEngine : MonoBehaviour {
 
     public float _coefLeader = 1.0f;
-    public float _coefAvoidObs = 1.0f;
-    public float _coefStayOut = 50.0f;
-    public float _coefSeparation = 1.0f;
+    public float _coefAvoidObs = 300.0f;
+    public float _coefStayOut = 300.0f;
+    public float _coefSeparation = 300.0f;
 
     // Define Agent attributes
     public int _leaderMass = 10;
@@ -16,12 +16,12 @@ public class AgentEngine : MonoBehaviour {
     public float _leaderVariation = 0.001f;
 
     public int _followerMass = 10;
-    public int _followerSpeed = 50;
+    public int _followerSpeed = 45;
     public int _followerSteer = 100;
 
     public int _drunkMass = 10;
     public int _drunkSpeed = 20;
-    public int _drunkSteer = 30;
+    public int _drunkSteer = 100;
 
     // Define Agent lists
     public Agent[] m_agentList;

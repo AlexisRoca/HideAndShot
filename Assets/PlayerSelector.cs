@@ -19,8 +19,10 @@ public class PlayerSelector : MonoBehaviour
     private GamepadSelector [] m_gamepads;
     private GamepadSelector m_currentSelectedGamepad;
 
+    bool m_readyToPlay = false;
+
     // Use this for initialization
-    void Start()
+    public void initPlayerSelector()
     {
         textToStart = GameObject.Find("StartGameText").GetComponent<Text>();
 
@@ -45,9 +47,9 @@ public class PlayerSelector : MonoBehaviour
             }
         }
 	}
-	
-	// Update is called once per frame
-	void Update()
+
+    // Update is called once per frame
+    public void updatePlayerSelector()
     {
         for(int i=0; i< m_gamepads.Length; i++)
         {
@@ -99,9 +101,15 @@ public class PlayerSelector : MonoBehaviour
                         PlayerSelection_Persistent.HidePlayers[i] = m_gamepads[i].m_id;
                     }
 
-                    SceneManager.LoadScene("Scene_1");
+                    m_readyToPlay = true;
                 }
             }
         }
+    }
+
+
+    // Test if the player selection is done
+    public bool isReady() {
+        return m_readyToPlay;
     }
 }
