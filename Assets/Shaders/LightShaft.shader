@@ -10,7 +10,7 @@
 		Tags { "Queue" = "Transparent"
 			   "RenderType" = "Transparent" }
 		
-		//Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass
 		{

@@ -24,6 +24,14 @@ public class LightShaft : MonoBehaviour {
         createMesh();
     }
 
+    void Update() {
+        Light spotLight = GetComponent<Light>();
+        _range = spotLight.range;
+        _angle = spotLight.spotAngle;
+        _intensity = spotLight.intensity;
+        createMesh();
+    }
+
     // Create Shaft mesh
     void createMesh() {
         float hNear = Mathf.Tan(((_angle/2.0f) / 360.0f) * 2 * Mathf.PI) * 1.0f;
