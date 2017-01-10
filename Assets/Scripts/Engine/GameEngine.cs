@@ -51,7 +51,7 @@ public class GameEngine : MonoBehaviour {
                 break;
 
             case stateGame.Play:
-                if (Input.GetButtonDown("PauseButton"))
+                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
                     currentState = stateGame.Pause;
 
                 float deltaTime = Time.deltaTime * _timeVariation;
@@ -65,7 +65,7 @@ public class GameEngine : MonoBehaviour {
                 break;
 
             case stateGame.Pause:
-                if (Input.GetButtonDown("PauseButton"))
+                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
                     currentState = stateGame.Play;
 
                 break;

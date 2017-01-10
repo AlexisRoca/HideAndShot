@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MouseController : Controller
 {
-    public override float horizontalAxis()  { return Input.GetAxisRaw("Mouse X"); }
-    public override float verticalAxis()    { return Input.GetAxisRaw("Mouse Y"); }
+    public override float horizontalAxis()  { return Input.GetAxis("Mouse X"); }
+    public override float verticalAxis()    { return Input.GetAxis("Mouse Y"); }
     public override bool actionButton()     { return Input.GetMouseButtonDown(0); }
 }

@@ -72,7 +72,7 @@ public class PlayerSelector :MonoBehaviour
                     return Substate.ShooterSelection;
                 }
 
-                else if(Input.GetKeyDown(KeyCode.KeypadEnter))
+                else if(Input.GetKeyDown(KeyCode.Return))
                 {
                     // Persistent data for keyboard
                     PlayerSelection_Persistent.nbHidePlayers = 2;
