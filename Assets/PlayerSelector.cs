@@ -64,6 +64,9 @@ public class PlayerSelector :MonoBehaviour
             else if(Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 // Persistent data for keyboard
+                PlayerSelection_Persistent.nbHidePlayers = 2;
+                PlayerSelection_Persistent.keyboardControl = true;
+
                 return Substate.ReadyForStart;
             }
             break;
@@ -73,14 +76,16 @@ public class PlayerSelector :MonoBehaviour
             {
                 if(Input.GetButtonDown("Continue"))
                 {
-                    PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id;
+                    PlayerSelection_Persistent.nbHidePlayers = m_activeplayers;
 
-                    PlayerSelection_Persistent.HidePlayers = new string[m_gamepads.Length - 1];
+                    PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id
+                    PlayerSelection_Persistent.HidePlayers_ID = new string[m_activeplayers - 1];
                     for(int i = 0; i < m_gamepads.Length; i++)
                     {
                         if(m_gamepads[i] == m_currentSelectedGamepad)
                             continue;
-                        PlayerSelection_Persistent.HidePlayers[i] = m_gamepads[i].m_id;
+
+                        PlayerSelection_Persistent.HidePlayers_ID[i] = m_gamepads[i].m_id;
                     }
 
                     return Substate.ReadyForStart;

@@ -16,9 +16,6 @@ public class Cursor : MonoBehaviour
         m_target = Resources.Load<Sprite>("Sprites/Targets/redSniperTarget");
         m_cursor = new GameObject("Cursor");
 
-        m_controller = new Controller();
-        m_controller.gamepadId = 1;
-
         SpriteRenderer renderer = m_cursor.AddComponent<SpriteRenderer>();
         renderer.sprite = m_target;
 
@@ -27,6 +24,16 @@ public class Cursor : MonoBehaviour
 
         m_cursor.transform.SetParent(m_canvas.transform);
         m_cursor.transform.localPosition = new Vector3(0,0,0);
+
+
+        if(PlayerSelection_Persistent.keyboardControl)
+            m_controller = new MouseController();
+        else
+        {
+            GamepadController gamepadController = new GamepadController();
+            gamepadController.gamepadId = PlayerSelection_Persistent.CursorPlayer_ID;
+            m_controller = gamepadController;
+        }
     }
 
     void clampCursorOnCanvas(ref Vector3 position)
@@ -47,13 +54,13 @@ public class Cursor : MonoBehaviour
     {
         Vector2 speed = Vector2.zero;
 
-        speed += (Input.GetKey(KeyCode.UpArrow)) ? new Vector2(0, 1) : Vector2.zero;
-        speed += (Input.GetKey(KeyCode.DownArrow)) ? new Vector2(0, -1) : Vector2.zero;
-        speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
-        speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
+        //speed += (Input.GetKey(KeyCode.UpArrow)) ? new Vector2(0, 1) : Vector2.zero;
+        //speed += (Input.GetKey(KeyCode.DownArrow)) ? new Vector2(0, -1) : Vector2.zero;
+        //speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
+        //speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
 
-        //speed.x = m_controller.horizontalAxis();
-        //speed.y = m_controller.verticalAxis();
+        speed.x = m_controller.horizontalAxis();
+        speed.y = m_controller.verticalAxis();
 
         Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
         clampCursorOnCanvas(ref newPosition);

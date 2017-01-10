@@ -3,9 +3,7 @@ using System.Collections;
 
 public class Controller
 {
-    public int gamepadId;
-
-    public float    horizontalAxis()    { return Input.GetAxis("LeftJoystickX_P" + gamepadId.ToString());   }
-    public float    verticalAxis()      { return Input.GetAxis("LeftJoystickY_P" + gamepadId.ToString());   }
-    public bool     actionButton()      { return Input.GetButtonDown("A_P" + gamepadId.ToString());         }   
+    public virtual float    horizontalAxis()    {return 0.0f;}
+    public virtual float    verticalAxis()      {return 0.0f;}
+    public virtual bool     actionButton()      {return false;}   
 }

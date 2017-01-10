@@ -3,9 +3,11 @@ using System.Collections;
 
 public class PlayerSelection_Persistent : MonoBehaviour
 {
-    public static int nbPlayers             = 0;
+    public static int nbHidePlayers             = 0;
+    public static bool keyboardControl;
+
     public static string CursorPlayer_ID    = "";
-    public static string [] HidePlayers;
+    public static string [] HidePlayers_ID;
 
     void Awake()
     {

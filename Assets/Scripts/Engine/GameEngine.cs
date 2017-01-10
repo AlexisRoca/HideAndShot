@@ -16,7 +16,7 @@ public class GameEngine : MonoBehaviour {
     ZoneEngine m_zoneEngine;
 
     // Define Player lists
-    Agent[] _playerList;
+    Agent[] _hidePlayerList;
 
 
     // Load the Game
@@ -56,10 +56,18 @@ public class GameEngine : MonoBehaviour {
 
 
     // Define the agent properties
-    void definePlayers()
+    void createPlayers()
     {
+        _hidePlayerList = new Agent[PlayerSelection_Persistent.nbHidePlayers];
+        for(int i=0; i<PlayerSelection_Persistent.nbHidePlayers; i++)
+        {
+            // TO DO
+            //_hidePlayerList = new Agent();
+
+        }
+
         // Player
-        foreach(Agent player in _playerList)
+        foreach(Agent player in _hidePlayerList)
             player.defineAgent(_playerMass, _playerSpeed, _playerSteer, Random.Range(0.0f, 360.0f));
     }
 
@@ -67,7 +75,7 @@ public class GameEngine : MonoBehaviour {
     // Player gestion
     void updatePlayers()
     {
-        foreach (Agent player in _playerList)
+        foreach (Agent player in _hidePlayerList)
         {
             Vector2 playSteer = AgentSteering.player(player._velocity);
 
@@ -83,10 +91,10 @@ public class GameEngine : MonoBehaviour {
         GameObject[] playerListGO = GameObject.FindGameObjectsWithTag("PlayerHide");
 
         // Player
-        _playerList = new Agent[playerListGO.Length];
+        _hidePlayerList = new Agent[playerListGO.Length];
         for(int i=0; i < playerListGO.Length; i++)
         {
-            _playerList.SetValue(playerListGO[i].GetComponent<Agent>(), i);
+            _hidePlayerList.SetValue(playerListGO[i].GetComponent<Agent>(), i);
         }
     }
 }
