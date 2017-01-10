@@ -8,7 +8,8 @@ public class PlayerSelector :MonoBehaviour
     enum Substate
     {
         NbPlayerSetup,
-        ShooterSelection
+        ShooterSelection,
+        ReadyForStart
     };
 
     public Vector3 CursorPlayerSelectionPosition;
@@ -62,7 +63,8 @@ public class PlayerSelector :MonoBehaviour
 
             else if(Input.GetKeyDown(KeyCode.KeypadEnter))
             {
-
+                // Persistent data for keyboard
+                return Substate.ReadyForStart;
             }
             break;
 
@@ -81,7 +83,7 @@ public class PlayerSelector :MonoBehaviour
                         PlayerSelection_Persistent.HidePlayers[i] = m_gamepads[i].m_id;
                     }
 
-                    m_readyToPlay = true;
+                    return Substate.ReadyForStart;
                 }
             }
 
@@ -176,6 +178,6 @@ public class PlayerSelector :MonoBehaviour
     // Test if the player selection is done
     public bool isReady()
     {
-        return m_readyToPlay;
+        return (m_substate == Substate.ReadyForStart);
     }
 }
