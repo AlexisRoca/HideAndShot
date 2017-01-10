@@ -37,7 +37,7 @@ public class GameMachine : MonoBehaviour {
     void Start () {
         currentState = stateMachine.Menu;
 
-        _playerSelector = this.gameObject.AddComponent<PlayerSelector>();
+        _playerSelector = this.gameObject.GetComponent<PlayerSelector>();
         _gameEngine = this.gameObject.AddComponent<GameEngine>();
     }
 	

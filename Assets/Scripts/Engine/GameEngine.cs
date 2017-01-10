@@ -33,8 +33,8 @@ public class GameEngine : MonoBehaviour {
     {
         currentState = stateGame.Pause;
 
-        collectGameObjects();
-        definePlayers();
+        //collectGameObjects();
+        createPlayers();
 
         m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
         m_agentEngine.initAgents();

@@ -13,22 +13,27 @@ public class PlayerSelector :MonoBehaviour
     };
 
     public Vector3 CursorPlayerSelectionPosition;
-    public Text textToStart;
     public float gamepadMaxSpeed;
     public int nbGamepadMax = 4;
+
+    public Text m_startGameText;
+    public Text m_chooseShooterText;
+    public Text m_startChoosingShooterText;
+    public Text m_errorNbPlayerText;
+    public Text m_joinGameText;
+    public GameObject m_redSniperTarget;
 
     private Substate m_substate;
     private bool m_hidePlayerSelectionPositionFree = true;
     private GamepadSelector[] m_gamepads;
     private GamepadSelector m_currentSelectedGamepad;
 
-    private int m_activeplayers;
+    private int m_nbActiveplayers;
     bool m_readyToPlay = false;
 
     // Use this for initialization
     public void initPlayerSelector()
     {
-        textToStart = GameObject.Find("StartGameText").GetComponent<Text>();
         m_gamepads = new GamepadSelector[nbGamepadMax];
 
         for(int i = 0; i < nbGamepadMax; i++)
@@ -43,7 +48,7 @@ public class PlayerSelector :MonoBehaviour
             m_gamepads[i].m_initialPosition = gamepadSprite.transform.position;
         }
 
-        m_activeplayers = 0;
+        m_nbActiveplayers = 0;
     }
 
     // Update is called once per frame
@@ -58,45 +63,60 @@ public class PlayerSelector :MonoBehaviour
         switch(m_substate)
         {
             case Substate.NbPlayerSetup:
-            if((m_activeplayers >= 2) && (Input.GetButtonDown("Continue")))
-                return Substate.ShooterSelection;
-
-            else if(Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                // Persistent data for keyboard
-                PlayerSelection_Persistent.nbHidePlayers = 2;
-                PlayerSelection_Persistent.keyboardControl = true;
-
-                return Substate.ReadyForStart;
-            }
-            break;
-
-            case Substate.ShooterSelection:
-            if((!m_hidePlayerSelectionPositionFree) && (m_currentSelectedGamepad.m_substate == GamepadSelector.Substate.Static))
-            {
-                if(Input.GetButtonDown("Continue"))
+                if((m_nbActiveplayers >= 2) && (Input.GetButtonDown("Continue")))
                 {
-                    PlayerSelection_Persistent.nbHidePlayers = m_activeplayers;
+                    m_joinGameText.color = new Color(m_joinGameText.color.r,m_joinGameText.color.g,m_joinGameText.color.b,0.0f);
+                    m_startChoosingShooterText.color = new Color(m_startChoosingShooterText.color.r,m_startChoosingShooterText.color.g,m_startChoosingShooterText.color.b,0.0f);
+                    m_redSniperTarget.GetComponent<SpriteRenderer>().enabled = true;
 
-                    PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id
-                    PlayerSelection_Persistent.HidePlayers_ID = new string[m_activeplayers - 1];
-                    for(int i = 0; i < m_gamepads.Length; i++)
-                    {
-                        if(m_gamepads[i] == m_currentSelectedGamepad)
-                            continue;
+                    return Substate.ShooterSelection;
+                }
 
-                        PlayerSelection_Persistent.HidePlayers_ID[i] = m_gamepads[i].m_id;
-                    }
+                else if(Input.GetKeyDown(KeyCode.KeypadEnter))
+                {
+                    // Persistent data for keyboard
+                    PlayerSelection_Persistent.nbHidePlayers = 2;
+                    PlayerSelection_Persistent.keyboardControl = true;
 
                     return Substate.ReadyForStart;
                 }
-            }
+            break;
 
-            else if((m_currentSelectedGamepad == null)
-                && Input.GetButtonDown("Back"))
-            {
-                return Substate.NbPlayerSetup;
-            }
+            case Substate.ShooterSelection:
+                if((!m_hidePlayerSelectionPositionFree) 
+                && ((m_currentSelectedGamepad != null) && (m_currentSelectedGamepad.m_substate == GamepadSelector.Substate.Static)))
+                {
+                    if(Input.GetButtonDown("Continue"))
+                    {
+                        PlayerSelection_Persistent.nbHidePlayers = m_nbActiveplayers;
+
+                        PlayerSelection_Persistent.CursorPlayer_ID = m_currentSelectedGamepad.m_id;
+                        PlayerSelection_Persistent.HidePlayers_ID = new string[m_nbActiveplayers - 1];
+
+                        for(int i = 0; i < m_gamepads.Length; i++)
+                        {
+                            if(m_gamepads[i] == m_currentSelectedGamepad)
+                                continue;
+
+                            if(m_gamepads[i].m_active)
+                                PlayerSelection_Persistent.HidePlayers_ID[i] = m_gamepads[i].m_id;
+                        }
+
+                        return Substate.ReadyForStart;
+                    }
+                }
+
+                else if((m_currentSelectedGamepad == null)
+                    && Input.GetButtonDown("Back"))
+                {
+                    m_joinGameText.color = new Color(m_joinGameText.color.r,m_joinGameText.color.g,m_joinGameText.color.b,1.0f);
+                    m_startChoosingShooterText.color = new Color(m_startChoosingShooterText.color.r,m_startChoosingShooterText.color.g,m_startChoosingShooterText.color.b,1.0f);
+
+                    m_chooseShooterText.color = new Color(m_chooseShooterText.color.r,m_chooseShooterText.color.g,m_chooseShooterText.color.b,0.0f);
+                    m_redSniperTarget.GetComponent<SpriteRenderer>().enabled = false;
+
+                    return Substate.NbPlayerSetup;
+                }
             break;
         }
 
@@ -108,74 +128,88 @@ public class PlayerSelector :MonoBehaviour
         switch(m_substate)
         {
             case Substate.NbPlayerSetup:
-            for(int i = 0; i < m_gamepads.Length; i++)
-            {
-                bool activeButton = Input.GetButtonDown("A_P" + (i + 1));
-                if(activeButton)
+                for(int i = 0; i < m_gamepads.Length; i++)
                 {
-                    if(m_gamepads[i].m_active == false)
+                    bool activeButton = Input.GetButtonDown("A_P" + (i + 1));
+                    if(activeButton)
                     {
-                        m_gamepads[i].m_active = true;
-                        m_gamepads[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1.0f,1.0f,1.0f,1.0f);
-                        m_activeplayers++;
-                    }
+                        if(m_gamepads[i].m_active == false)
+                        {
+                            m_gamepads[i].m_active = true;
+                            m_gamepads[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1.0f,1.0f,1.0f,1.0f);
+                            m_nbActiveplayers++;
+                        }
 
-                    else
-                    {
-                        m_gamepads[i].m_active = false;
-                        m_gamepads[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1.0f,1.0f,1.0f,0.3f);
-                        m_activeplayers--;
+                        else
+                        {
+                            m_gamepads[i].m_active = false;
+                            m_gamepads[i].gameObject.GetComponent<SpriteRenderer>().color = new Color(1.0f,1.0f,1.0f,0.3f);
+                            m_nbActiveplayers--;
+                        }
                     }
                 }
-            }
+
+                if(m_nbActiveplayers < 2)
+                {
+                    m_errorNbPlayerText.color = new Color(m_errorNbPlayerText.color.r,m_errorNbPlayerText.color.g,m_errorNbPlayerText.color.b,1.0f);
+                    m_startChoosingShooterText.color = new Color(m_startChoosingShooterText.color.r,m_startChoosingShooterText.color.g,m_startChoosingShooterText.color.b,0.0f);
+                }
+                else
+                {
+                    m_errorNbPlayerText.color = new Color(m_errorNbPlayerText.color.r,m_errorNbPlayerText.color.g,m_errorNbPlayerText.color.b,0.0f);
+                    m_startChoosingShooterText.color = new Color(m_startChoosingShooterText.color.r,m_startChoosingShooterText.color.g,m_startChoosingShooterText.color.b,1.0f);
+                }
             break;
 
             case Substate.ShooterSelection:
-            for(int i = 0; i < m_gamepads.Length; i++)
-            {
-                if(m_gamepads[i].m_active == true)
+                for(int i = 0; i < m_gamepads.Length; i++)
                 {
-                    string currentGamepad = "LeftJoystickY_P" + m_gamepads[i].m_id;
-                    float speedY = Input.GetAxis(currentGamepad);
-
-                    if(m_hidePlayerSelectionPositionFree)
+                    if(m_gamepads[i].m_active == true)
                     {
-                        if(speedY > 0.20)
-                        {
-                            m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
-                            m_gamepads[i].m_wantedPosition = CursorPlayerSelectionPosition;
-                            m_currentSelectedGamepad = m_gamepads[i];
+                        string currentGamepad = "LeftJoystickY_P" + m_gamepads[i].m_id;
+                        float speedY = Input.GetAxis(currentGamepad);
 
-                            m_hidePlayerSelectionPositionFree = false;
-                            textToStart.color = new Color(.0f,.0f,.0f,1.0f);
+                        if(m_hidePlayerSelectionPositionFree)
+                        {
+                            if(speedY > 0.20)
+                            {
+                                m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
+                                m_gamepads[i].m_wantedPosition = CursorPlayerSelectionPosition;
+                                m_currentSelectedGamepad = m_gamepads[i];
+
+                                m_hidePlayerSelectionPositionFree = false;
+                                m_startGameText.color = new Color(.0f,.0f,.0f,1.0f);
+                            }
+                        }
+
+                        else
+                        {
+                            if((m_currentSelectedGamepad == m_gamepads[i])
+                            && (speedY < -0.20))
+                            {
+                                m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
+                                m_gamepads[i].m_wantedPosition = m_gamepads[i].m_initialPosition;
+                                m_startGameText.color = new Color(.0f,.0f,.0f,.0f);
+
+                                m_hidePlayerSelectionPositionFree = true;
+                                m_currentSelectedGamepad = null;
+                            }
                         }
                     }
 
-                    else
-                    {
-                        if((m_currentSelectedGamepad == m_gamepads[i])
-                        && (speedY < -0.20))
-                        {
-                            m_gamepads[i].m_substate = GamepadSelector.Substate.Moving;
-                            m_gamepads[i].m_wantedPosition = m_gamepads[i].m_initialPosition;
-                            textToStart.color = new Color(.0f,.0f,.0f,.0f);
-                        }
-                    }
+                    m_gamepads[i].update(Time.deltaTime);
                 }
 
-                m_gamepads[i].update(Time.deltaTime);
-
-                if(m_gamepads[i] == m_currentSelectedGamepad)
+                if(m_hidePlayerSelectionPositionFree)
                 {
-                    // BERK
-                    if((m_gamepads[i].m_wantedPosition == m_gamepads[i].m_initialPosition)
-                    && (m_gamepads[i].m_substate == GamepadSelector.Substate.Static))
-                    {
-                        m_hidePlayerSelectionPositionFree = false;
-                        m_currentSelectedGamepad = null;
-                    }
+                    m_chooseShooterText.color = new Color(m_chooseShooterText.color.r,m_chooseShooterText.color.g,m_chooseShooterText.color.b,1.0f);
+                    m_startGameText.color = new Color(m_startGameText.color.r,m_startGameText.color.g,m_startGameText.color.b,0.0f);
                 }
-            }
+                else
+                {
+                    m_chooseShooterText.color = new Color(m_chooseShooterText.color.r,m_chooseShooterText.color.g,m_chooseShooterText.color.b,0.0f);
+                    m_startGameText.color = new Color(m_startGameText.color.r,m_startGameText.color.g,m_startGameText.color.b,1.0f);
+                }
             break;
         }
     }

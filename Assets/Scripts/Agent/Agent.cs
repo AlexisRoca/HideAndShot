@@ -63,7 +63,7 @@ public class Agent : MonoBehaviour {
 
 
     // Update the agent values
-    public void updateAgent (float dTime) {
+    public virtual void updateAgent (float dTime) {
         // Collect the world position in case of collision
         _position = new Vector2(transform.position.x, transform.position.z);
         // _orientation = transform.rotation.eulerAngles.y;
