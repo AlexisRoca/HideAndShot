@@ -21,7 +21,6 @@ public class GameMachine : MonoBehaviour {
         Load,
         Init,
         Play,
-        Pause,
         End
     }
 
@@ -84,15 +83,9 @@ public class GameMachine : MonoBehaviour {
                 _gameEngine.updateGame();
                 break;
 
-            case stateMachine.Pause:
-                //pause();
-                break;
-
             case stateMachine.End:
                 //_gameEngine.endGame();
                 break;
-
-            default: break;
         }
     }
 

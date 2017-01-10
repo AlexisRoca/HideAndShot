@@ -3,6 +3,15 @@ using System.Collections;
 
 public class GameEngine : MonoBehaviour {
 
+    // State Machine
+    enum stateGame {
+        Tuto,
+        Play,
+        Pause
+    }
+
+    stateGame currentState;
+
     // Define Generic attributes
     public float _timeVariation = 1.0f;
 
@@ -22,6 +31,8 @@ public class GameEngine : MonoBehaviour {
     // Load the Game
     public void loadGame()
     {
+        currentState = stateGame.Pause;
+
         collectGameObjects();
         definePlayers();
 
@@ -35,22 +46,30 @@ public class GameEngine : MonoBehaviour {
     // Update the Game
     public void updateGame()
     {
-        float deltaTime = Time.deltaTime * _timeVariation;
+        switch (currentState) {
+            case stateGame.Tuto:
+                break;
 
-        // Player
-        updatePlayers();
+            case stateGame.Play:
+                if (Input.GetButtonDown("PauseButton"))
+                    currentState = stateGame.Pause;
 
-        // Agent
-        m_agentEngine.update(deltaTime);
+                float deltaTime = Time.deltaTime * _timeVariation;
 
-        // Zone
-        //int agentListSize = m_agentEngine.m_leaderList.Length + m_agentEngine.m_followerList.Length;
-        //Agent[] agentFeelCrossing = new Agent[agentListSize];
-        //agentFeelCrossing.SetValue(m_agentEngine.m_leaderList, 0);
-        //agentFeelCrossing.SetValue(m_agentEngine.m_followerList, m_agentEngine.m_leaderList.Length);
-        Agent[] agentFeelCrossing = m_agentEngine.m_leaderList;
+                // Player
+                updatePlayers();
+                // Agent
+                m_agentEngine.update(deltaTime);
+                // Zone
+                m_zoneEngine.update(m_agentEngine.m_leaderList, deltaTime);
+                break;
 
-        m_zoneEngine.update(agentFeelCrossing, deltaTime);
+            case stateGame.Pause:
+                if (Input.GetButtonDown("PauseButton"))
+                    currentState = stateGame.Play;
+
+                break;
+        }
     }
 
 
