@@ -8,7 +8,8 @@ public class GamepadSelector : MonoBehaviour
         Static,
         Moving
     };
-        
+
+    public bool m_active;
     public string m_id;
     public Vector3 m_initialPosition;
     public Vector3 m_previousPosition;
