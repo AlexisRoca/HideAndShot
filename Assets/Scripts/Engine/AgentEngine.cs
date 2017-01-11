@@ -183,7 +183,7 @@ public class AgentEngine : MonoBehaviour {
             {
                 agent.updateAgent(deltaTime);
                 agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
-                agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
+                agent.transform.position = new Vector3(agent._position.x, 12.0f, agent._position.y);
             } else {
                 // Generate blood everywhere
                 //agent.isBlooding(deltaTime);
