@@ -76,17 +76,17 @@ public class AgentSteering{
     }
 
 
-    // Hide Player control
-    public static Vector2 player (Vector2 agentVelocity) {
-        Vector2 force = Vector2.zero;
+    //// Hide Player control
+    //public static Vector2 player (Vector2 agentVelocity) {
+    //    Vector2 force = Vector2.zero;
 
-        force += (Input.GetKey(KeyCode.Z)) ? new Vector2(0, 1) : Vector2.zero;
-        force += (Input.GetKey(KeyCode.S)) ? new Vector2(0, -1) : Vector2.zero;
-        force += (Input.GetKey(KeyCode.Q)) ? new Vector2(-1, 0) : Vector2.zero;
-        force += (Input.GetKey(KeyCode.D)) ? new Vector2(1, 0) : Vector2.zero;
+    //    force += (Input.GetKey(KeyCode.Z)) ? new Vector2(0, 1) : Vector2.zero;
+    //    force += (Input.GetKey(KeyCode.S)) ? new Vector2(0, -1) : Vector2.zero;
+    //    force += (Input.GetKey(KeyCode.Q)) ? new Vector2(-1, 0) : Vector2.zero;
+    //    force += (Input.GetKey(KeyCode.D)) ? new Vector2(1, 0) : Vector2.zero;
 
-        force = (force.Equals(Vector2.zero)) ? -agentVelocity*0.2f : force;
+    //    force = (force.Equals(Vector2.zero)) ? -agentVelocity*0.2f : force;
 
-        return force;
-    }
+    //    return force;
+    //}
 }

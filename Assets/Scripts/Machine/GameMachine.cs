@@ -72,7 +72,7 @@ public class GameMachine : MonoBehaviour {
             break;
 
             case stateMachine.End:
-            //_gameEngine.endGame();
+                //_gameEngine.endGame();
             break;
         }
     }
@@ -105,10 +105,16 @@ public class GameMachine : MonoBehaviour {
             break;
 
             case stateMachine.Play:
-            break;
+                // If game over
+                if (_gameEngine.isOver())
+                {
+                    //sceneLoading = SceneManager.LoadSceneAsync("Scene_End");
+                    return stateMachine.End;
+                }
+                break;
 
             case stateMachine.End:
-            //_gameEngine.endGame();
+                //_gameEngine.endGame();
             break;
         }
 

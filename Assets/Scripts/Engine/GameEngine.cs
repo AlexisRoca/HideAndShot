@@ -7,7 +7,8 @@ public class GameEngine : MonoBehaviour {
     enum stateGame {
         Tuto,
         Play,
-        Pause
+        Pause,
+        End
     }
 
     stateGame currentState;
@@ -31,8 +32,6 @@ public class GameEngine : MonoBehaviour {
     // Load the Game
     public void loadGame()
     {
-        currentState = stateGame.Play;
-
         createPlayers();
 
         m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
@@ -40,7 +39,10 @@ public class GameEngine : MonoBehaviour {
 
         m_zoneEngine = this.gameObject.AddComponent<ZoneEngine>();
         m_zoneEngine.initZones();
+
+        currentState = stateGame.Play;
     }
+
 
     // Update the Game
     public void updateGame()
@@ -71,8 +73,16 @@ public class GameEngine : MonoBehaviour {
 
                 break;
         }
-    }
 
+        // Check if all players are dead
+        foreach(HiddenAgent player in _hiddenPlayersList)
+        {
+            if (!player._isDead)
+                break;
+
+            currentState = stateGame.End;
+        }
+    }
 
 
     // Define the agent properties
@@ -96,5 +106,12 @@ public class GameEngine : MonoBehaviour {
 
         for(int i = PlayerSelection_Persistent.nbHidePlayers; i < 3; i++)
             playerListGO[i].gameObject.SetActive(false);
+    }
+
+
+    // Game over
+    public bool isOver()
+    {
+        return currentState == stateGame.End;
     }
 }

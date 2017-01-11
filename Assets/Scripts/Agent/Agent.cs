@@ -28,10 +28,6 @@ public class Agent : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        // _mass = 50;
-        // _maxSpeed = 30;
-        // _maxSteer = 1000;
-
         _orientation = 0.0f;
         _position = new Vector2(transform.position.x, transform.position.z);
         _velocity = Vector2.zero;
@@ -122,9 +118,9 @@ public class Agent : MonoBehaviour {
             _isDead = true;
 
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            gameObject.GetComponent<Rigidbody>().AddForce(collision.impulse);
 
-            _steeringForce += new Vector2(collision.impulse.x, collision.impulse.z) * 100.0f;
-            updateAgent(Time.deltaTime);
+            Debug.Log(collision.impulse);
 
             // Blood emmision
             bloodDirection = collision.relativeVelocity;

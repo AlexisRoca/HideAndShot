@@ -6,9 +6,9 @@ public class KeyboardController : Controller
 {
     public override float horizontalAxis()
     {
-        if(Input.GetKeyDown(KeyCode.Q))
+        if(Input.GetKey(KeyCode.Q))
             return -1.0f;
-        else if(Input.GetKeyDown(KeyCode.D))
+        else if(Input.GetKey(KeyCode.D))
             return 1.0f;
         else
             return 0.0f;

@@ -6,7 +6,7 @@ public class ZoneEngine : MonoBehaviour {
     // Define steering coefficient
     public float _coefCrossing = 300.0f;
     public int _timeCrossing = 5;
-    public float _percentCars = 0.02f;
+    public float _percentCars = 0.05f;
     public int _maxCarsOnRoad = 5;
 
     int _nbCurrentCars = 0;

@@ -6,7 +6,7 @@ public class Cursor : MonoBehaviour
     Sprite m_target;
     GameObject m_cursor;
     GameObject m_canvas;
-    public float m_sensibility = 50.0f;
+    float m_sensibility = 20.0f;
     public Controller m_controller;
 
 	// Use this for initialization
@@ -51,22 +51,19 @@ public class Cursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 speed = Vector2.zero;
+        //Vector2 speed = Vector2.zero;
 
-        //speed += (Input.GetKey(KeyCode.UpArrow)) ? new Vector2(0, 1) : Vector2.zero;
-        //speed += (Input.GetKey(KeyCode.DownArrow)) ? new Vector2(0, -1) : Vector2.zero;
-        //speed += (Input.GetKey(KeyCode.LeftArrow)) ? new Vector2(-1, 0) : Vector2.zero;
-        //speed += (Input.GetKey(KeyCode.RightArrow)) ? new Vector2(1, 0) : Vector2.zero;
+        //speed.x = m_controller.horizontalAxis();
+        //speed.y = m_controller.verticalAxis();
 
-        speed.x = m_controller.horizontalAxis();
-        speed.y = m_controller.verticalAxis();
+        //Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
+        //clampCursorOnCanvas(ref newPosition);
+        //m_cursor.transform.localPosition = newPosition;
 
-        Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
-        clampCursorOnCanvas(ref newPosition);
-        m_cursor.transform.localPosition = newPosition;
+        m_cursor.transform.localPosition = new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
 
 
-        if(Input.GetKey(KeyCode.Space))
+        if (m_controller.actionButton())
         {
             Ray ray = new Ray(Camera.main.transform.position,(m_cursor.transform.position - Camera.main.transform.position).normalized);
             RaycastHit hit;

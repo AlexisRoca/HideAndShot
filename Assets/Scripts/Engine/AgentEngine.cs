@@ -67,12 +67,12 @@ public class AgentEngine : MonoBehaviour {
 
     public void update(float deltaTime)
     {
-        redefineAgentProperties();
+        //redefineAgentProperties();
 
         updateLeaders();
         updateFollowers();
         updateDrunk();
-        updateSeparation(m_followerList,_coefSeparation);
+        updateSeparation(m_followerList, _coefSeparation);
 
         updateAgentPosition(deltaTime);
     }
@@ -185,7 +185,8 @@ public class AgentEngine : MonoBehaviour {
                 agent.transform.rotation = Quaternion.Euler(0.0f, agent._orientation, 0.0f);
                 agent.transform.position = new Vector3(agent._position.x, agent.transform.position.y, agent._position.y);
             } else {
-                agent.isBlooding(deltaTime);
+                // Generate blood everywhere
+                //agent.isBlooding(deltaTime);
             }
         }
     }
