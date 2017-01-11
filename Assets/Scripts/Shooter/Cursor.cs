@@ -6,7 +6,7 @@ public class Cursor : MonoBehaviour
     Sprite m_target;
     GameObject m_cursor;
     GameObject m_canvas;
-    float m_sensibility = 20.0f;
+
     public Controller m_controller;
 
 	// Use this for initialization

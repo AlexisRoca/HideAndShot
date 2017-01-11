@@ -88,18 +88,22 @@ public class PlayerSelector :MonoBehaviour
                 {
                     if(Input.GetButtonDown("Continue"))
                     {
-                        PlayerSelection_Persistent.nbHidePlayers = m_nbActiveplayers;
+                        PlayerSelection_Persistent.nbHidePlayers = m_nbActiveplayers - 1;
 
                         PlayerSelection_Persistent.shooterGamepadID = m_currentSelectedGamepad.m_id;
                         PlayerSelection_Persistent.hiddenPlayerGamepadID = new string[m_nbActiveplayers - 1];
 
+                        int it = 0;
                         for(int i = 0; i < m_gamepads.Length; i++)
                         {
                             if(m_gamepads[i] == m_currentSelectedGamepad)
                                 continue;
 
-                            if(m_gamepads[i].m_active)
-                                PlayerSelection_Persistent.hiddenPlayerGamepadID[i] = m_gamepads[i].m_id;
+                            if (m_gamepads[i].m_active)
+                            {
+                                PlayerSelection_Persistent.hiddenPlayerGamepadID[it] = m_gamepads[i].m_id;
+                                it++;
+                            }                                
                         }
 
                         return Substate.ReadyForStart;

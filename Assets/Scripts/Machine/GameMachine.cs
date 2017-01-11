@@ -5,11 +5,9 @@ using UnityEngine.SceneManagement;
 public class GameMachine : MonoBehaviour {
 
     // Define Game attributes
-    public int _nbBullet = 5;
     public int _timeGameSecond = 90;
-
-    bool loadDone = false;
-
+    float _timer = 0.0f;
+    
     // Define Game Engine
     PlayerSelector _playerSelector;
     GameEngine _gameEngine;
