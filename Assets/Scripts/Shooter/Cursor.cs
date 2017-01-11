@@ -30,8 +30,7 @@ public class Cursor : MonoBehaviour
             m_controller = new MouseController();
         else
         {
-            GamepadController gamepadController = new GamepadController();
-            gamepadController.gamepadId = PlayerSelection_Persistent.CursorPlayer_ID;
+            GamepadController gamepadController = new GamepadController(PlayerSelection_Persistent.shooterGamepadID);
             m_controller = gamepadController;
         }
     }

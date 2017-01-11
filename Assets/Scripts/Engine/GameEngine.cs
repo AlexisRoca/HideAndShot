@@ -25,15 +25,14 @@ public class GameEngine : MonoBehaviour {
     ZoneEngine m_zoneEngine;
 
     // Define Player lists
-    Agent[] _hidePlayerList;
+    HiddenAgent [] _hiddenPlayersList;
 
 
     // Load the Game
     public void loadGame()
     {
-        currentState = stateGame.Pause;
+        currentState = stateGame.Play;
 
-        //collectGameObjects();
         createPlayers();
 
         m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
@@ -57,7 +56,9 @@ public class GameEngine : MonoBehaviour {
                 float deltaTime = Time.deltaTime * _timeVariation;
 
                 // Player
-                updatePlayers();
+                foreach (HiddenAgent hiddenPlayer in _hiddenPlayersList)
+                    hiddenPlayer.updateAgent(deltaTime);
+
                 // Agent
                 m_agentEngine.update(deltaTime);
                 // Zone
@@ -77,43 +78,23 @@ public class GameEngine : MonoBehaviour {
     // Define the agent properties
     void createPlayers()
     {
-        _hidePlayerList = new Agent[PlayerSelection_Persistent.nbHidePlayers];
+        GameObject[] playerListGO = GameObject.FindGameObjectsWithTag("PlayerHide");
+        _hiddenPlayersList = new HiddenAgent[PlayerSelection_Persistent.nbHidePlayers];
+
         for(int i=0; i<PlayerSelection_Persistent.nbHidePlayers; i++)
         {
-            // TO DO
-            //_hidePlayerList = new Agent();
+            HiddenAgent hiddenAgent = playerListGO[i].GetComponent<HiddenAgent>();
+            hiddenAgent.defineAgent(_playerMass,_playerSpeed,_playerSteer,Random.Range(0.0f,360.0f));
 
+            if(PlayerSelection_Persistent.keyboardControl)
+                hiddenAgent.m_controller = new KeyboardController();
+            else
+                hiddenAgent.m_controller = new GamepadController(PlayerSelection_Persistent.hiddenPlayerGamepadID[i]);
+
+            _hiddenPlayersList[i] = hiddenAgent;
         }
 
-        // Player
-        foreach(Agent player in _hidePlayerList)
-            player.defineAgent(_playerMass, _playerSpeed, _playerSteer, Random.Range(0.0f, 360.0f));
-    }
-
-
-    // Player gestion
-    void updatePlayers()
-    {
-        foreach (Agent player in _hidePlayerList)
-        {
-            Vector2 playSteer = AgentSteering.player(player._velocity);
-
-            player._steeringForce += playSteer * _coefPlayer;
-        }
-    }
-
-
-    // Collect all game objects in the scene
-    void collectGameObjects ()
-    {
-        // Define Game Objects lists
-        GameObject[] playerListGO = GameObject.FindGameObjectsWithTag("PlayerHide");
-
-        // Player
-        _hidePlayerList = new Agent[playerListGO.Length];
-        for(int i=0; i < playerListGO.Length; i++)
-        {
-            _hidePlayerList.SetValue(playerListGO[i].GetComponent<Agent>(), i);
-        }
+        for(int i = PlayerSelection_Persistent.nbHidePlayers; i < 3; i++)
+            playerListGO[i].gameObject.SetActive(false);
     }
 }

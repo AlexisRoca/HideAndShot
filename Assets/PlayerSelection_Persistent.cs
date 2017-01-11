@@ -6,8 +6,8 @@ public class PlayerSelection_Persistent : MonoBehaviour
     public static int nbHidePlayers             = 0;
     public static bool keyboardControl;
 
-    public static string CursorPlayer_ID    = "";
-    public static string [] HidePlayers_ID;
+    public static string shooterGamepadID    = "";
+    public static string [] hiddenPlayerGamepadID;
 
     void Awake()
     {

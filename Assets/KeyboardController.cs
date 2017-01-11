@@ -16,10 +16,10 @@ public class KeyboardController : Controller
 
     public override float verticalAxis()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
-            return -1.0f;
-        else if(Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKey(KeyCode.Z))
             return 1.0f;
+        else if(Input.GetKey(KeyCode.S))
+            return -1.0f;
         else
             return 0.0f;
     }

@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class GamepadController : Controller
 {
-    public string gamepadId;
+    public string m_gamepadId;
 
-    public override float horizontalAxis()  { return Input.GetAxis("LeftJoystickX_P" + gamepadId); }
-    public override float verticalAxis()    { return Input.GetAxis("LeftJoystickY_P" + gamepadId); }
-    public override bool actionButton()     { return Input.GetButtonDown("A_P" + gamepadId); }
+    public GamepadController(string gamepadId)
+    {
+        m_gamepadId = gamepadId;
+    }
+
+    public override float horizontalAxis()  { return Input.GetAxis("LeftJoystickX_P" + m_gamepadId); }
+    public override float verticalAxis()    { return Input.GetAxis("LeftJoystickY_P" + m_gamepadId); }
+    public override bool actionButton()     { return Input.GetButtonDown("A_P" + m_gamepadId); }
 }
