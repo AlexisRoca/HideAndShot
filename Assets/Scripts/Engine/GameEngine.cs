@@ -4,14 +4,14 @@ using System.Collections;
 public class GameEngine : MonoBehaviour {
 
     // State Machine
-    enum stateGame {
+    enum StateGame {
         Tuto,
         Play,
         Pause,
-        End
+        Over
     }
 
-    stateGame currentState;
+    StateGame currentState;
 
     // Define Generic attributes
     public float _timeVariation = 1.0f;
@@ -27,11 +27,14 @@ public class GameEngine : MonoBehaviour {
 
     // Define Player lists
     HiddenAgent [] _hiddenPlayersList;
-
+    GameObject m_HUD;
+    Cursor m_shooterPlayer;
 
     // Load the Game
     public void loadGame()
     {
+        m_shooterPlayer = this.gameObject.AddComponent<Cursor>();
+        m_HUD = GameObject.FindGameObjectWithTag("Canvas");
         createPlayers();
 
         m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
@@ -40,21 +43,54 @@ public class GameEngine : MonoBehaviour {
         m_zoneEngine = this.gameObject.AddComponent<ZoneEngine>();
         m_zoneEngine.initZones();
 
-        currentState = stateGame.Play;
+        currentState = StateGame.Play;
     }
-
 
     // Update the Game
     public void updateGame()
     {
-        switch (currentState) {
-            case stateGame.Tuto:
+        currentState = checkChangeGameState();
+        updateGameState();
+    }
+
+    private StateGame checkChangeGameState()
+    {
+        switch(currentState)
+        {
+            case StateGame.Tuto:
+            break;
+
+            case StateGame.Play:
+                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
+                    return StateGame.Pause;
+
+                if(m_shooterPlayer.m_nbShoot == 0)
+                    return StateGame.Over;
+
+                if(checkIfAllHiddenPlayersAreDead())
+                    return StateGame.Over;
+            break;
+
+            case StateGame.Pause:
+                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
+                    return StateGame.Play;
+            break;
+
+            case StateGame.Over:
+            break;
+        }
+
+        return currentState;
+    }
+
+    private void updateGameState()
+    {
+        switch (currentState)
+        {
+            case StateGame.Tuto:
                 break;
 
-            case stateGame.Play:
-                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
-                    currentState = stateGame.Pause;
-
+            case StateGame.Play:
                 float deltaTime = Time.deltaTime * _timeVariation;
 
                 // Player
@@ -63,24 +99,13 @@ public class GameEngine : MonoBehaviour {
 
                 // Agent
                 m_agentEngine.update(deltaTime);
+
                 // Zone
                 m_zoneEngine.update(m_agentEngine.m_leaderList, deltaTime);
-                break;
+            break;
 
-            case stateGame.Pause:
-                if(Input.GetButtonDown("PauseButton") || Input.GetKeyDown(KeyCode.Escape))
-                    currentState = stateGame.Play;
-
-                break;
-        }
-
-        // Check if all players are dead
-        foreach(HiddenAgent player in _hiddenPlayersList)
-        {
-            if (!player._isDead)
-                break;
-
-            currentState = stateGame.End;
+            case StateGame.Pause:
+            break;
         }
     }
 
@@ -106,12 +131,22 @@ public class GameEngine : MonoBehaviour {
 
         for(int i = PlayerSelection_Persistent.nbHidePlayers; i < 3; i++)
             playerListGO[i].gameObject.SetActive(false);
+
+        m_shooterPlayer.m_nbShoot = PlayerSelection_Persistent.nbHidePlayers * 3;
     }
 
+    private bool checkIfAllHiddenPlayersAreDead()
+    {
+        foreach(HiddenAgent player in _hiddenPlayersList)
+            if(!player._isDead)
+                return false;
+
+        return true;
+    }
 
     // Game over
     public bool isOver()
     {
-        return currentState == stateGame.End;
+        return currentState == StateGame.Over;
     }
 }

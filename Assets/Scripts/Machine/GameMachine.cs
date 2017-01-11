@@ -30,6 +30,7 @@ public class GameMachine : MonoBehaviour {
     // Do not destroy this game object
     void Awake(){
         DontDestroyOnLoad(this);
+        UnityEngine.Cursor.visible = false;
     }
 
 
@@ -59,7 +60,6 @@ public class GameMachine : MonoBehaviour {
             case stateMachine.playerLobby:
                 _playerSelector.updatePlayerSelector();
             break;
-
 
             case stateMachine.LoadMainScene:
             break;

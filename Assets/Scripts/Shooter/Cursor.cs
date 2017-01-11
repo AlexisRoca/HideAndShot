@@ -9,6 +9,11 @@ public class Cursor : MonoBehaviour
     float m_sensibility = 20.0f;
     public Controller m_controller;
 
+    public int m_nbShoot;
+
+    public int m_shootCooldown = 2;
+    private float m_lastShootTime;
+
 	// Use this for initialization
 	void Start()
     {
@@ -51,20 +56,15 @@ public class Cursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Vector2 speed = Vector2.zero;
+        Vector3 newPosition= new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
+        clampCursorOnCanvas(ref newPosition);
+        m_cursor.transform.localPosition = newPosition;
 
-        //speed.x = m_controller.horizontalAxis();
-        //speed.y = m_controller.verticalAxis();
-
-        //Vector3 newPosition = m_cursor.transform.localPosition + new Vector3(speed.x, speed.y, 0.0f) * m_sensibility * Time.deltaTime;
-        //clampCursorOnCanvas(ref newPosition);
-        //m_cursor.transform.localPosition = newPosition;
-
-        m_cursor.transform.localPosition = new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
-
-
-        if (m_controller.actionButton())
+        if(m_controller.actionButton() && ((Time.time- m_lastShootTime)>m_shootCooldown) && (m_nbShoot > 0))
         {
+            m_lastShootTime = Time.time;
+            m_nbShoot--;
+
             Ray ray = new Ray(Camera.main.transform.position,(m_cursor.transform.position - Camera.main.transform.position).normalized);
             RaycastHit hit;
 

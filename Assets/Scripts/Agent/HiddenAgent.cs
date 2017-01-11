@@ -22,7 +22,7 @@ public class HiddenAgent : Agent
         speed.x = m_controller.horizontalAxis() * walkspeed;
         speed.y = m_controller.verticalAxis() * walkspeed;
 
-        speed = (speed.Equals(Vector2.zero)) ? -_velocity * 0.2f : speed;
+        speed = (speed.Equals(Vector2.zero)) ? -_velocity * 5.0f : speed;
 
         _steeringForce = speed;
     }
