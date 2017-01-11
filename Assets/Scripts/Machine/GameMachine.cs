@@ -17,16 +17,16 @@ public class GameMachine : MonoBehaviour {
     // State Machine
     public enum stateMachine
     {
-        Menu,
-        Load,
-        Init,
+        playerLobby,
+        LoadMainScene,
+        InitMainScene,
         Play,
         End
     }
 
     stateMachine currentState;
+    AsyncOperation sceneLoading;
 
-    
     // Do not destroy this game object
     void Awake(){
         DontDestroyOnLoad(this);
@@ -35,64 +35,83 @@ public class GameMachine : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        currentState = stateMachine.Menu;
+        currentState = stateMachine.playerLobby;
 
         _playerSelector = this.gameObject.GetComponent<PlayerSelector>();
+        _playerSelector.initPlayerSelector();
+
         _gameEngine = this.gameObject.AddComponent<GameEngine>();
     }
 	
 
 	// Update is called once per frame
-	void Update () {
-        switch (currentState)
-        {
-            case stateMachine.Menu:
-                // Load Menu
-                if(! loadDone) {
-                    // SceneManager.LoadScene("Scene_Menu");
-                    _playerSelector.initPlayerSelector();
-                    loadDone = true;
-                }
-
-                // Update Menu
-                _playerSelector.updatePlayerSelector();
-
-                // If the game can start
-                if (_playerSelector.isReady())
-                    changeState(stateMachine.Load);
-
-                break;
-
-
-            case stateMachine.Load:
-                // Load Game
-                if (!loadDone) {
-                    SceneManager.LoadScene("Scene_1");
-                    _gameEngine.loadGame();
-                    loadDone = true;
-                }
-
-                changeState(stateMachine.Init);
-                break;
-
-            case stateMachine.Init:
-                changeState(stateMachine.Play);
-                break;
-
-            case stateMachine.Play:
-                _gameEngine.updateGame();
-                break;
-
-            case stateMachine.End:
-                //_gameEngine.endGame();
-                break;
-        }
+	void Update ()
+    {
+        currentState = checkChangeState();
+        updateState();
     }
 
 
+    public void updateState()
+    {
+        switch(currentState)
+        {
+            case stateMachine.playerLobby:
+                _playerSelector.updatePlayerSelector();
+            break;
+
+
+            case stateMachine.LoadMainScene:
+            break;
+
+            case stateMachine.InitMainScene:
+            break;
+
+            case stateMachine.Play:
+                _gameEngine.updateGame();
+            break;
+
+            case stateMachine.End:
+            //_gameEngine.endGame();
+            break;
+        }
+    }
+
     // Change state of game machine
-    public void changeState(stateMachine newState) {
-        currentState = newState;
-        loadDone = false;
+    public stateMachine checkChangeState() {
+        switch(currentState)
+        {
+            case stateMachine.playerLobby:
+                // If the game can start
+                if(_playerSelector.isReady())
+                {
+                    sceneLoading = SceneManager.LoadSceneAsync("Scene_1");
+                    return stateMachine.LoadMainScene;
+                }
+            break;
+
+
+            case stateMachine.LoadMainScene:
+                // Load Game
+                if(sceneLoading.isDone)
+                {
+                    _gameEngine.loadGame();
+                    return stateMachine.InitMainScene;
+                }
+            break;
+
+            case stateMachine.InitMainScene:
+                return stateMachine.Play;
+            break;
+
+            case stateMachine.Play:
+            break;
+
+            case stateMachine.End:
+            //_gameEngine.endGame();
+            break;
+        }
+
+        return currentState;
     }
 }
