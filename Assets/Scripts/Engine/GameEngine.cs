@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class GameEngine : MonoBehaviour {
@@ -28,13 +29,16 @@ public class GameEngine : MonoBehaviour {
     // Define Player lists
     HiddenAgent [] _hiddenPlayersList;
     GameObject m_HUD;
+    Text m_bulletsCounterText;
+    Text m_aliveHiddenPlayerCounterText;
     Cursor m_shooterPlayer;
+
+    int m_nbHiddenPlayersAlive;
 
     // Load the Game
     public void loadGame()
     {
-        m_shooterPlayer = this.gameObject.AddComponent<Cursor>();
-        m_HUD = GameObject.FindGameObjectWithTag("Canvas");
+        initHUD();
         createPlayers();
 
         m_agentEngine = this.gameObject.AddComponent<AgentEngine>();
@@ -102,6 +106,10 @@ public class GameEngine : MonoBehaviour {
 
                 // Zone
                 m_zoneEngine.update(m_agentEngine.m_leaderList, deltaTime);
+
+                // HUD
+                m_bulletsCounterText.text = "NB Bullets: " + m_shooterPlayer.m_nbShoot;
+                m_aliveHiddenPlayerCounterText.text = "NB Hidden Player Alive: " + m_nbHiddenPlayersAlive;
             break;
 
             case StateGame.Pause:
@@ -114,9 +122,10 @@ public class GameEngine : MonoBehaviour {
     void createPlayers()
     {
         GameObject[] playerListGO = GameObject.FindGameObjectsWithTag("PlayerHide");
-        _hiddenPlayersList = new HiddenAgent[PlayerSelection_Persistent.nbHidePlayers];
+        m_nbHiddenPlayersAlive = PlayerSelection_Persistent.nbHidePlayers;
+        _hiddenPlayersList = new HiddenAgent[m_nbHiddenPlayersAlive];
 
-        for(int i=0; i<PlayerSelection_Persistent.nbHidePlayers; i++)
+        for(int i=0; i<m_nbHiddenPlayersAlive; i++)
         {
             HiddenAgent hiddenAgent = playerListGO[i].GetComponent<HiddenAgent>();
             hiddenAgent.defineAgent(_playerMass,_playerSpeed,_playerSteer,Random.Range(0.0f,360.0f));
@@ -129,19 +138,27 @@ public class GameEngine : MonoBehaviour {
             _hiddenPlayersList[i] = hiddenAgent;
         }
 
-        for(int i = PlayerSelection_Persistent.nbHidePlayers; i < 3; i++)
+        for(int i = m_nbHiddenPlayersAlive; i < 3; i++)
             playerListGO[i].gameObject.SetActive(false);
 
-        m_shooterPlayer.m_nbShoot = PlayerSelection_Persistent.nbHidePlayers * 3;
+        m_shooterPlayer.m_nbShoot = m_nbHiddenPlayersAlive * 3;
+    }
+
+    void initHUD()
+    {
+        m_shooterPlayer = this.gameObject.AddComponent<Cursor>();
+        m_HUD = GameObject.FindGameObjectWithTag("Canvas");
+
+        m_bulletsCounterText = GameObject.Find("ShooterBulletsCounter").GetComponent<Text>();
+        m_bulletsCounterText.text = "NB Bullets: " + m_shooterPlayer.m_nbShoot;
+
+        m_aliveHiddenPlayerCounterText = GameObject.Find("AlivePlayersCounter").GetComponent<Text>();
+        m_aliveHiddenPlayerCounterText.text = "NB Hidden Player Alive: " + m_nbHiddenPlayersAlive;
     }
 
     private bool checkIfAllHiddenPlayersAreDead()
     {
-        foreach(HiddenAgent player in _hiddenPlayersList)
-            if(!player._isDead)
-                return false;
-
-        return true;
+        return (m_nbHiddenPlayersAlive == 0);
     }
 
     // Game over
