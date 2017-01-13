@@ -56,11 +56,17 @@ public class Cursor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 newPosition= new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
+        Vector3 newPosition = Vector3.zero;
+
+        if(m_controller is MouseController)
+            newPosition = new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
+        else
+            newPosition = m_cursor.transform.localPosition + new Vector3(m_controller.horizontalAxis(), m_controller.verticalAxis(), 0.0f);
+
         clampCursorOnCanvas(ref newPosition);
         m_cursor.transform.localPosition = newPosition;
 
-        if(m_controller.actionButton() && ((Time.time- m_lastShootTime)>m_shootCooldown) && (m_nbShoot > 0))
+        if (m_controller.actionButton() && ((Time.time- m_lastShootTime)>m_shootCooldown) && (m_nbShoot > 0))
         {
             m_lastShootTime = Time.time;
             m_nbShoot--;

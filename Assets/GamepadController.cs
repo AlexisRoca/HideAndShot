@@ -5,7 +5,7 @@ using UnityEngine;
 public class GamepadController : Controller
 {
     public string m_gamepadId;
-    float m_sensibility = 50.0f;
+    float m_sensibility = 25.0f;
 
     public GamepadController(string gamepadId)
     {

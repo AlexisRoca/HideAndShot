@@ -21,7 +21,7 @@ public class Car : MonoBehaviour {
         _gameObject.transform.localScale = new Vector3(30.0f, 20.0f, 70.0f);
 
         Rigidbody _rigidbody = _gameObject.AddComponent<Rigidbody>();
-        _rigidbody.isKinematic = false;
+        _rigidbody.isKinematic = true;
 
         _position = position;
         _rotation = rotation;

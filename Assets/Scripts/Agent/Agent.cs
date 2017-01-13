@@ -119,6 +119,7 @@ public class Agent : MonoBehaviour {
 
             gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
             gameObject.GetComponent<Rigidbody>().AddForce(collision.impulse);
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
 
             // Blood emmision
             bloodDirection = collision.relativeVelocity;

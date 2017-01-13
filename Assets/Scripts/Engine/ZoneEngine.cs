@@ -32,13 +32,15 @@ public class ZoneEngine : MonoBehaviour {
 
         // Define Cars list
         _carsList = new Car[_maxCarsOnRoad];
+
+        defineZoneProperties();
     }
 
     public void update(Agent[] agentList, float deltaTime)
     {
-        defineZoneProperties();
+        // defineZoneProperties();
 
-        updateZones(agentList, deltaTime);
+        // updateZones(agentList, deltaTime);
     }
 
 
